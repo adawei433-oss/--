@@ -1,703 +1,828 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>6月培训计划 · 干部管理基本功</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<title>三懂知识大挑战 · 网页版</title>
 <style>
-:root {
-  --sidebar-w: 220px;
-  --topbar-h: 64px;
-  --bg: #F5F4F1;
-  --surface: #FFFFFF;
-  --border: #E8E6E1;
-  --text-primary: #111827;
-  --text-secondary: #6B7280;
-  --text-muted: #9CA3AF;
-  --accent: #FF7C00;
+  :root{
+    --blue:#3273F2;
+    --blue-deep:#2256C9;
+    --blue-soft:#E7F0FE;
+    --blue-wash:#F0F6FF;
+    --ink:#23304A;
+    --ink2:#5B6B8C;
+    --muted:#93A2BE;
+    --cream:#FFF9EC;
+    --yellow:#FFC53D;
+    --yellow-soft:#FFF3D6;
+    --pink:#FF8FB1;
+    --pink-soft:#FFE9F0;
+    --green:#3EBE8F;
+    --green-soft:#E2F6EE;
+    --red:#F2685C;
+    --red-soft:#FDE9E7;
+    --card:#FFFFFF;
+    --r:24px;
+    --shadow:0 10px 30px rgba(50,115,242,.10);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:"PingFang SC","Microsoft YaHei",-apple-system,"Segoe UI",sans-serif;
+    color:var(--ink);line-height:1.65;min-height:100vh;
+    background:
+      radial-gradient(900px 480px at 85% -8%, #FDEFD2 0%, transparent 60%),
+      radial-gradient(1100px 600px at -10% 110%, #C9DEFB 0%, transparent 60%),
+      linear-gradient(180deg, var(--cream) 0%, #F3F0E4 30%, #E6F0FE 70%, #D9E8FD 100%);
+    background-attachment:fixed;
+  }
+  .topbar{
+    max-width:1160px;margin:0 auto;padding:22px 32px 0;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:17px;letter-spacing:.05em;}
+  .logo .dot{
+    width:30px;height:30px;border-radius:10px;background:linear-gradient(135deg,#4D86F6,var(--blue));
+    color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;
+    box-shadow:0 4px 10px rgba(50,115,242,.3);
+  }
+  .topbar .chip{
+    font-size:12px;color:var(--blue);background:#fff;border:1.5px dashed var(--blue);
+    padding:5px 16px;border-radius:99px;font-weight:700;letter-spacing:.1em;
+  }
+  .wrap{max-width:1160px;margin:0 auto;padding:0 32px 70px;}
+  .screen{display:none;}
+  .screen.on{display:block;}
 
-  --blue-bg: #EFF6FF; --blue-bar: #DBEAFE; --blue-icon: #2563EB; --blue-name: #1E40AF; --blue-border: #BFDBFE;
-  --amber-bg: #FFFBEB; --amber-bar: #FEF3C7; --amber-icon: #D97706; --amber-name: #92400E; --amber-border: #FDE68A;
-  --green-bg: #F0FDF4; --green-bar: #D1FAE5; --green-icon: #059669; --green-name: #065F46; --green-border: #A7F3D0;
+  /* ============ 通用 ============ */
+  .btn{
+    display:inline-block;border:none;cursor:pointer;
+    background:linear-gradient(180deg,#4D86F6,var(--blue));
+    color:#fff;font-size:17px;font-weight:700;letter-spacing:.2em;
+    padding:16px 64px;border-radius:999px;
+    box-shadow:0 10px 22px rgba(50,115,242,.35), inset 0 -3px 0 rgba(0,0,0,.12);
+    transition:transform .12s;
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn:active{transform:translateY(1px);}
+  .btn-line{
+    display:inline-block;cursor:pointer;background:#fff;
+    border:2px solid var(--blue);color:var(--blue);
+    font-size:15px;font-weight:700;letter-spacing:.15em;
+    padding:13px 44px;border-radius:999px;transition:transform .12s;
+  }
+  .btn-line:hover{transform:translateY(-2px);}
+  .card{
+    background:var(--card);border-radius:var(--r);
+    box-shadow:var(--shadow);padding:26px 26px 24px;
+  }
+  .sec-tt{display:flex;align-items:center;gap:9px;margin-bottom:16px;}
+  .sec-tt .ico{font-size:19px;}
+  .sec-tt b{font-size:17px;letter-spacing:.04em;}
+  .sec-tt .tag{
+    margin-left:auto;font-size:11px;color:var(--blue);background:var(--blue-soft);
+    padding:3px 12px;border-radius:99px;font-weight:600;
+  }
+  .ribbon{
+    display:inline-block;background:linear-gradient(90deg,#FF9F68,var(--pink));
+    color:#fff;font-size:13.5px;font-weight:700;letter-spacing:.25em;
+    padding:6px 24px;border-radius:5px;
+  }
 
-  --radius: 12px;
-  --radius-sm: 8px;
-  --shadow: 0 1px 4px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
-}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body {
-  font-family: 'Noto Sans SC', -apple-system, sans-serif;
-  background: var(--bg);
-  color: var(--text-primary);
-  font-size: 14px;
-  line-height: 1.6;
-  overflow-x: hidden;
-}
+  /* ============ 封面 ============ */
+  #cover{padding-top:46px;}
+  .hero{
+    display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;
+  }
+  .cv-badge{
+    display:inline-block;background:#fff;border:1.5px dashed var(--blue);
+    color:var(--blue);font-size:12.5px;font-weight:700;letter-spacing:.14em;
+    padding:5px 18px;border-radius:99px;margin-bottom:20px;transform:rotate(-1.5deg);
+  }
+  .cv-title{font-size:58px;font-weight:900;letter-spacing:.03em;line-height:1.2;}
+  .cv-title .hl{color:var(--blue);position:relative;display:inline-block;}
+  .cv-title .hl::after{
+    content:"";position:absolute;left:2px;right:2px;bottom:6px;height:13px;
+    background:var(--yellow);opacity:.5;border-radius:6px;z-index:-1;
+  }
+  .cv-sub{margin:16px 0 22px;}
+  .cv-desc{
+    font-size:15px;color:var(--ink2);max-width:480px;line-height:1.9;margin-bottom:26px;
+  }
+  .cv-desc b{color:var(--ink);}
+  .cv-feature{display:flex;gap:14px;margin-bottom:30px;max-width:480px;}
+  .cv-chip{
+    flex:1;background:#fff;border-radius:18px;padding:14px 6px 12px;text-align:center;
+    box-shadow:0 6px 16px rgba(50,115,242,.08);
+  }
+  .cv-chip .e{font-size:24px;line-height:1.2;}
+  .cv-chip .t{font-size:13px;color:var(--ink);font-weight:700;margin-top:4px;}
+  .cv-chip .d{font-size:11px;color:var(--muted);}
+  .cv-form{display:flex;gap:12px;max-width:480px;margin-bottom:24px;}
+  .cv-input{
+    flex:1;display:flex;align-items:center;gap:10px;background:#fff;
+    border-radius:99px;padding:12px 20px;
+    box-shadow:0 5px 14px rgba(50,115,242,.08);
+  }
+  .cv-input label{font-size:12.5px;color:var(--muted);font-weight:600;white-space:nowrap;}
+  .cv-input input{
+    flex:1;border:none;outline:none;font-size:15px;font-weight:600;color:var(--ink);
+    background:transparent;min-width:0;
+  }
+  .cv-start{display:flex;align-items:center;gap:20px;}
+  .cv-note{font-size:12px;color:var(--muted);letter-spacing:.04em;}
+  .cv-stats{font-size:13px;color:var(--ink2);margin-top:18px;}
+  .cv-stats b{color:var(--blue);font-size:16px;}
+  .hero-art{position:relative;text-align:center;}
+  .hero-card{
+    background:#fff;border-radius:30px;box-shadow:0 18px 50px rgba(50,115,242,.16);
+    padding:40px 30px 32px;display:inline-block;position:relative;
+  }
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+  .floaty{animation:floaty 3.4s ease-in-out infinite;}
+  .doodle{position:absolute;pointer-events:none;}
 
-/* ─── Sidebar ─── */
-.sidebar {
-  position: fixed; top: 0; left: 0;
-  width: var(--sidebar-w); height: 100vh;
-  background: var(--surface);
-  border-right: 1px solid var(--border);
-  display: flex; flex-direction: column;
-  z-index: 100;
-  transition: transform .28s cubic-bezier(.4,0,.2,1);
-}
-.sidebar-logo {
-  padding: 20px 20px 16px;
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 10px;
-}
-.sidebar-logo img { height: 32px; width: auto; }
-.sidebar-logo-text { font-size: 12px; font-weight: 600; color: var(--text-secondary); line-height: 1.3; }
+  /* ============ 答题 ============ */
+  #quiz{padding-top:42px;}
+  .qz-shell{max-width:780px;margin:0 auto;}
+  .qz-top{
+    display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;
+    font-size:14px;font-weight:700;
+  }
+  .qz-top .no b{color:var(--blue);font-size:22px;}
+  .qz-top .no span{color:var(--muted);font-weight:600;}
+  .qz-timer{
+    color:var(--ink2);background:#fff;border-radius:99px;padding:5px 16px;
+    font-size:13px;font-weight:700;box-shadow:0 4px 10px rgba(50,115,242,.08);
+  }
+  .qz-timer i{font-style:normal;color:var(--blue);}
+  .qz-prog{height:10px;background:#fff;border-radius:99px;overflow:hidden;
+    box-shadow:inset 0 1px 3px rgba(35,48,74,.08);margin-bottom:22px;}
+  .qz-prog i{display:block;height:100%;border-radius:99px;
+    background:linear-gradient(90deg,#6FA1F8,var(--blue));width:0;transition:width .35s;}
+  .qz-tags{display:flex;gap:10px;margin-bottom:14px;}
+  .qz-tag{font-size:12px;font-weight:700;padding:4px 16px;border-radius:99px;letter-spacing:.06em;}
+  .tg-dim{background:var(--blue-soft);color:var(--blue);}
+  .tg-stage{background:var(--yellow-soft);color:#C28A12;}
+  .qz-card{
+    background:#fff;border-radius:var(--r);box-shadow:var(--shadow);
+    padding:34px 38px 30px;
+  }
+  .qz-q{font-size:21px;font-weight:800;line-height:1.7;margin-bottom:24px;}
+  .qz-opts{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+  .qz-opt{
+    border:2px solid #E4ECFA;border-radius:16px;background:#FAFCFF;
+    padding:15px 18px;cursor:pointer;
+    display:flex;align-items:center;gap:10px;font-size:15px;font-weight:500;
+    transition:all .15s;color:var(--ink);
+  }
+  .qz-opt:hover{border-color:#B9CFF8;transform:translateY(-1px);}
+  .qz-opt .k{font-weight:800;color:var(--muted);min-width:20px;}
+  .qz-opt .ck{
+    margin-left:auto;width:21px;height:21px;border-radius:50%;flex:none;
+    border:2px solid #D7E2F5;background:#fff;position:relative;
+  }
+  .qz-opt.sel{
+    background:linear-gradient(180deg,#4D86F6,var(--blue));
+    border-color:var(--blue);color:#fff;font-weight:700;
+    box-shadow:0 8px 18px rgba(50,115,242,.32);
+  }
+  .qz-opt.sel .k{color:rgba(255,255,255,.85);}
+  .qz-opt.sel .ck{border-color:#fff;background:#fff;}
+  .qz-opt.sel .ck::after{
+    content:"";position:absolute;left:6.5px;top:3px;width:5px;height:9px;
+    border:solid var(--blue);border-width:0 2.5px 2.5px 0;transform:rotate(40deg);
+  }
+  .qz-conf{display:none;margin-top:24px;border-top:2px dashed #EAF0FB;padding-top:20px;}
+  .qz-conf.show{display:flex;align-items:center;gap:20px;justify-content:center;}
+  .qz-conf-q{font-size:14px;color:var(--ink2);font-weight:600;}
+  .cf{
+    border-radius:999px;padding:13px 42px;font-size:15px;font-weight:800;
+    letter-spacing:.12em;cursor:pointer;transition:transform .12s;
+  }
+  .cf:hover{transform:translateY(-2px);}
+  .cf-sure{border:none;background:linear-gradient(180deg,#4D86F6,var(--blue));color:#fff;
+    box-shadow:0 8px 16px rgba(50,115,242,.3), inset 0 -3px 0 rgba(0,0,0,.1);}
+  .cf-unsure{background:#fff;border:2px solid #C9D8F3;color:var(--ink2);}
 
-.nav-list { padding: 16px 10px; flex: 1; overflow-y: auto; }
-.nav-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 12px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  font-size: 13px; font-weight: 500; color: var(--text-secondary);
-  transition: all .18s;
-  margin-bottom: 2px;
-  border: 1px solid transparent;
-  text-decoration: none;
-}
-.nav-item:hover { background: var(--bg); color: var(--text-primary); }
-.nav-item.active { background: #FFF4EC; color: var(--accent); border-color: #FFD9B3; }
-.nav-item .nav-dot {
-  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-}
-.nav-item:nth-child(1) .nav-dot { background: var(--blue-icon); }
-.nav-item:nth-child(2) .nav-dot { background: var(--amber-icon); }
-.nav-item:nth-child(3) .nav-dot { background: var(--green-icon); }
-.nav-item.active .nav-dot { background: var(--accent); }
+  /* ============ 结果 ============ */
+  #report{padding-top:42px;}
+  .rs-hero{
+    display:grid;grid-template-columns:380px 1fr;gap:24px;align-items:stretch;margin-bottom:24px;
+  }
+  .rs-score-card{
+    background:#fff;border:2.5px solid var(--blue-soft);border-radius:var(--r);
+    box-shadow:var(--shadow);padding:42px 24px 26px;text-align:center;position:relative;
+    display:flex;flex-direction:column;justify-content:center;gap:2px;
+  }
+  .rs-medal{position:absolute;top:-28px;left:50%;transform:translateX(-50%);}
+  .rs-yay{font-size:27px;font-weight:900;color:var(--blue);letter-spacing:.06em;margin-top:8px;}
+  .rs-cap{font-size:12.5px;color:var(--ink2);font-weight:600;}
+  .rs-sc-num{font-size:64px;font-weight:900;color:var(--blue);line-height:1.15;margin-top:8px;}
+  .rs-sc-num span{font-size:20px;font-weight:700;}
+  .rs-sc-pct{font-size:13.5px;color:var(--ink2);font-weight:600;}
+  .rs-sc-pct b{color:var(--blue);}
+  .rs-sc-note{font-size:10px;color:var(--muted);margin-top:5px;}
+  .rs-verdict{
+    display:inline-block;margin-top:14px;
+    background:linear-gradient(90deg,#FFD56A,var(--yellow));
+    color:#7A5200;font-size:14px;font-weight:800;letter-spacing:.14em;
+    padding:8px 26px;border-radius:99px;box-shadow:0 5px 12px rgba(255,197,61,.4);
+  }
+  .rs-title-chip{
+    display:inline-block;margin-top:10px;background:var(--pink-soft);color:#D9537C;
+    font-size:12.5px;font-weight:700;padding:5px 18px;border-radius:99px;letter-spacing:.1em;
+  }
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;align-items:stretch;}
+  .grid2 > .card{height:100%;display:flex;flex-direction:column;}
+  .fullcard{margin-bottom:24px;}
+  .routes-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+  .routes-grid .route{margin-bottom:0;}
+  .more-line{
+    margin-top:12px;font-size:12.5px;color:var(--ink2);background:var(--blue-wash);
+    border-radius:12px;padding:9px 14px;font-weight:600;
+  }
 
-.sidebar-footer {
-  padding: 14px 16px;
-  border-top: 1px solid var(--border);
-  font-size: 11px; color: var(--text-muted);
-  line-height: 1.6;
-}
+  .dimbar{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+  .dimbar .e{
+    width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;
+    font-size:17px;font-weight:900;color:#fff;flex:none;
+  }
+  .dimbar .body{flex:1;}
+  .dimbar .nm{font-size:14.5px;font-weight:700;}
+  .dimbar .tr{height:10px;background:#EEF3FC;border-radius:99px;overflow:hidden;margin-top:6px;}
+  .dimbar .tr i{display:block;height:100%;border-radius:99px;}
+  .dimbar .pc{font-size:22px;font-weight:900;width:62px;text-align:right;}
+  .prose{font-size:14px;color:var(--ink2);line-height:1.95;}
+  .prose b{color:var(--ink);}
+  .prose .hl{color:var(--blue);font-weight:800;}
+  .pillrow{display:flex;gap:6px;align-items:baseline;justify-content:space-between;margin-bottom:6px;}
+  .stg{background:var(--blue-wash);border-radius:16px;padding:15px 16px 13px;margin-bottom:12px;}
+  .stg .nm{font-size:14.5px;font-weight:800;}
+  .stg .n{font-size:11px;color:var(--muted);font-weight:600;}
+  .stg .pc{font-size:19px;font-weight:900;}
+  .stg .tr{height:8px;background:#fff;border-radius:99px;overflow:hidden;margin:6px 0 9px;}
+  .stg .tr i{display:block;height:100%;border-radius:99px;}
+  .stg .d{font-size:12.5px;color:var(--ink2);line-height:1.8;}
+  .quad{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .qd{border-radius:16px;padding:15px 15px 13px;}
+  .qd .n{font-size:27px;font-weight:900;line-height:1.2;}
+  .qd .t{font-size:13.5px;font-weight:800;margin-top:1px;}
+  .qd .d{font-size:11px;opacity:.8;font-weight:500;}
+  .qd1{background:var(--green-soft);color:#1E8A63;}
+  .qd2{background:var(--blue-soft);color:var(--blue-deep);}
+  .qd3{background:var(--yellow-soft);color:#B07E0E;}
+  .qd4{background:var(--red-soft);color:#C7493D;}
+  .warnbox{
+    background:var(--red-soft);border-radius:14px;padding:12px 16px;margin-top:12px;
+    font-size:13px;color:#A03D32;line-height:1.8;
+  }
+  .warnbox b{display:block;color:#8E2F25;}
+  .lensrow{display:flex;gap:10px;margin-bottom:14px;}
+  .lens{flex:1;background:var(--blue-wash);border-radius:16px;text-align:center;padding:13px 4px 11px;}
+  .lens .n{font-size:25px;font-weight:900;color:var(--ink2);}
+  .lens .t{font-size:12px;font-weight:700;color:var(--ink2);}
+  .lens.top{background:var(--yellow-soft);outline:2px solid var(--yellow);}
+  .lens.top .n{color:#B07E0E;}
+  .route{
+    display:flex;gap:14px;background:var(--blue-wash);border-radius:16px;
+    padding:15px 16px;margin-bottom:12px;align-items:flex-start;
+  }
+  .route .no{
+    width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;
+    font-size:14px;font-weight:900;display:flex;align-items:center;justify-content:center;
+    flex:none;margin-top:2px;
+  }
+  .route .bd{font-size:13px;color:var(--ink2);line-height:1.8;}
+  .route .bd b{color:var(--ink);font-size:14px;}
+  .route .doc{
+    display:inline-block;margin-top:6px;background:#fff;color:var(--blue);
+    font-size:11.5px;font-weight:700;padding:4px 14px;border-radius:99px;
+  }
+  .str{margin-bottom:14px;font-size:14px;color:var(--ink2);line-height:1.9;}
+  .str b{color:var(--ink);}
+  .str .no{color:var(--blue);font-weight:900;margin-right:7px;}
+  .rs-btns{display:flex;gap:16px;justify-content:center;margin-top:8px;}
+  .rs-foot{text-align:center;font-size:11px;color:var(--muted);margin-top:24px;letter-spacing:.2em;}
 
-/* ─── Main ─── */
-.main {
-  margin-left: var(--sidebar-w);
-  min-height: 100vh;
-  display: flex; flex-direction: column;
-}
-
-/* ─── Topbar ─── */
-.topbar {
-  position: sticky; top: 0; z-index: 90;
-  background: rgba(245,244,241,.92);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  height: var(--topbar-h);
-  display: flex; align-items: center;
-  padding: 0 28px; gap: 12px;
-}
-.hamburger {
-  display: none; background: none; border: none; cursor: pointer;
-  padding: 6px; border-radius: 6px; color: var(--text-secondary);
-  font-size: 20px;
-}
-.search-engines {
-  display: flex; gap: 4px;
-}
-.engine-btn {
-  padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border);
-  background: var(--surface); cursor: pointer; font-size: 12px; font-weight: 500;
-  color: var(--text-secondary); transition: all .15s;
-  font-family: inherit;
-}
-.engine-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-.engine-btn:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
-
-.search-wrap {
-  flex: 1; position: relative; max-width: 500px;
-}
-.search-wrap i {
-  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-  color: var(--text-muted); font-size: 16px; pointer-events: none;
-}
-.search-input {
-  width: 100%; height: 38px;
-  padding: 0 14px 0 38px;
-  border: 1px solid var(--border); border-radius: 20px;
-  background: var(--surface); font-size: 13px; color: var(--text-primary);
-  outline: none; font-family: inherit;
-  transition: border-color .15s, box-shadow .15s;
-}
-.search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,124,0,.12); }
-.search-btn {
-  margin-left: 6px;
-  height: 38px; padding: 0 18px; border-radius: 20px;
-  background: var(--accent); color: #fff; border: none; cursor: pointer;
-  font-size: 13px; font-weight: 500; font-family: inherit;
-  transition: opacity .15s;
-}
-.search-btn:hover { opacity: .88; }
-
-/* ─── Content ─── */
-.content { padding: 32px 36px 60px; flex: 1; }
-
-/* ─── Section ─── */
-.section { margin-bottom: 48px; scroll-margin-top: calc(var(--topbar-h) + 20px); }
-
-.section-header {
-  display: flex; align-items: center; gap: 14px;
-  padding: 14px 18px;
-  border-radius: var(--radius) var(--radius) 0 0;
-  margin-bottom: 0;
-}
-.section-header + .section-tabs { border-radius: 0; }
-
-.sec-icon-wrap {
-  width: 36px; height: 36px; border-radius: 9px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 17px; color: #fff; flex-shrink: 0;
-}
-.sec-info { flex: 1; }
-.sec-title { font-size: 15px; font-weight: 700; line-height: 1.2; }
-.sec-sub { font-size: 11px; margin-top: 2px; opacity: .7; }
-.sec-purpose {
-  display: inline-flex; align-items: center;
-  margin-top: 4px; padding: 2px 9px;
-  border-radius: 20px; font-size: 11px; font-weight: 600;
-}
-.sec-badge {
-  font-size: 11px; font-weight: 600;
-  padding: 4px 11px; border-radius: 20px;
-  white-space: nowrap;
-}
-
-.section-a .section-header { background: var(--blue-bar); }
-.section-a .sec-title { color: var(--blue-name); }
-.section-a .sec-icon-wrap { background: var(--blue-icon); }
-.section-a .sec-purpose { background: var(--blue-border); color: var(--blue-name); }
-.section-a .sec-badge { background: var(--blue-border); color: #1D4ED8; }
-
-.section-b .section-header { background: var(--amber-bar); }
-.section-b .sec-title { color: var(--amber-name); }
-.section-b .sec-icon-wrap { background: var(--amber-icon); }
-.section-b .sec-purpose { background: var(--amber-border); color: var(--amber-name); }
-.section-b .sec-badge { background: var(--amber-border); color: #92400E; }
-
-.section-c .section-header { background: var(--green-bar); }
-.section-c .sec-title { color: var(--green-name); }
-.section-c .sec-icon-wrap { background: var(--green-icon); }
-.section-c .sec-purpose { background: var(--green-border); color: var(--green-name); }
-.section-c .sec-badge { background: var(--green-border); color: #065F46; }
-
-/* Tabs */
-.section-tabs {
-  display: flex; gap: 0;
-  background: var(--surface);
-  border: 1px solid var(--border); border-top: none;
-  padding: 0 16px;
-  overflow-x: auto;
-}
-.tab-btn {
-  padding: 10px 16px; border: none; background: none; cursor: pointer;
-  font-size: 12px; font-weight: 500; color: var(--text-muted);
-  font-family: inherit; border-bottom: 2px solid transparent;
-  transition: all .15s; white-space: nowrap;
-}
-.tab-btn:hover { color: var(--text-primary); }
-.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
-
-/* Cards grid */
-.section-body {
-  background: var(--surface);
-  border: 1px solid var(--border); border-top: none;
-  border-radius: 0 0 var(--radius) var(--radius);
-  padding: 18px;
-}
-.tab-panel { display: none; }
-.tab-panel.active { display: block; }
-
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 10px;
-}
-.cards-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
-
-/* Card */
-.card {
-  display: flex; align-items: flex-start; gap: 12px;
-  padding: 14px 16px;
-  border: 1px solid var(--border); border-radius: 10px;
-  background: var(--surface);
-  cursor: pointer; text-decoration: none; color: inherit;
-  transition: all .18s;
-  position: relative; overflow: hidden;
-}
-.card::before {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(255,124,0,.04), transparent);
-  opacity: 0; transition: opacity .18s;
-}
-.card:hover { border-color: var(--accent); box-shadow: 0 4px 16px rgba(255,124,0,.12); transform: translateY(-1px); }
-.card:hover::before { opacity: 1; }
-.card.opt { border-style: dashed; opacity: .75; }
-
-.card-icon {
-  width: 36px; height: 36px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 17px; flex-shrink: 0;
-}
-.card-text { flex: 1; min-width: 0; }
-.card-title { font-size: 13px; font-weight: 600; color: var(--text-primary); line-height: 1.35; }
-.card-desc { font-size: 11px; color: var(--text-muted); margin-top: 4px; display: flex; flex-wrap: wrap; gap: 6px; }
-.card-tag {
-  display: inline-flex; align-items: center; gap: 3px;
-  padding: 1px 7px; border-radius: 20px; font-size: 10px; font-weight: 600;
-}
-.tag-light { background: #EDE9FF; color: #5B21B6; }
-.tag-mid { background: #FEF3C7; color: #92400E; }
-.tag-heavy { background: #FFE4E6; color: #9F1239; }
-.tag-green { background: #D1FAE5; color: #065F46; }
-
-.week-pill {
-  display: inline-block; padding: 1px 7px; border-radius: 20px;
-  font-size: 10px; font-weight: 700;
-}
-.wk2 { background: #DBEAFE; color: #1D4ED8; }
-.wk3 { background: #D1FAE5; color: #065F46; }
-.wk4 { background: #FFE4E6; color: #BE123C; }
-.wkalt { background: #F3E8FF; color: #7E22CE; border: 1px dashed #C084FC; }
-
-.note-bar {
-  margin-top: 12px; padding: 9px 14px;
-  background: var(--bg); border-radius: 8px;
-  font-size: 11px; color: var(--text-secondary);
-  border-left: 3px solid var(--border);
-}
-
-/* Overlay for mobile */
-.overlay {
-  display: none; position: fixed; inset: 0; background: rgba(0,0,0,.35);
-  z-index: 99; backdrop-filter: blur(2px);
-}
-
-/* ─── Responsive ─── */
-@media (max-width: 768px) {
-  .sidebar { transform: translateX(-100%); }
-  .sidebar.open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,.15); }
-  .overlay.show { display: block; }
-  .main { margin-left: 0; }
-  .hamburger { display: flex; align-items: center; justify-content: center; }
-  .content { padding: 20px 16px 48px; }
-  .cards-grid { grid-template-columns: 1fr 1fr; }
-  .topbar { padding: 0 16px; gap: 8px; }
-  .search-wrap { max-width: none; }
-  .search-engines { display: none; }
-}
-@media (max-width: 480px) {
-  .cards-grid { grid-template-columns: 1fr; }
-  .cards-grid.cols-2 { grid-template-columns: 1fr; }
-}
+  @media (max-width:880px){
+    .hero{grid-template-columns:1fr;gap:30px;}
+    .hero-art{order:-1;}
+    .cv-title{font-size:42px;}
+    .rs-hero{grid-template-columns:1fr;}
+    .grid2{grid-template-columns:1fr;}
+    .routes-grid{grid-template-columns:1fr;}
+    .qz-opts{grid-template-columns:1fr;}
+    .qz-card{padding:26px 20px;}
+    .cv-form{flex-direction:column;}
+    .qz-conf.show{flex-direction:column;gap:12px;}
+    .cf{width:100%;text-align:center;}
+  }
+  @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important;}}
 </style>
 </head>
 <body>
 
-<!-- Overlay -->
-<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<div class="topbar">
+  <div class="logo"><span class="dot">兔</span>三懂知识大挑战</div>
+  <span class="chip">✦ 一套测评 · 三张地图 ✦</span>
+</div>
 
-<!-- ─── Sidebar ─── -->
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-logo">
-    
-    <div class="sidebar-logo-text">培训计划<br>干部能力建设</div>
-  </div>
+<div class="wrap">
 
-  <nav class="nav-list">
-    <a class="nav-item active" href="#sec-a" onclick="closeSidebar()">
-      <span class="nav-dot"></span>知识库运营
-    </a>
-    <a class="nav-item" href="#sec-b" onclick="closeSidebar()">
-      <span class="nav-dot"></span>专题培训
-    </a>
-    <a class="nav-item" href="#sec-c" onclick="closeSidebar()">
-      <span class="nav-dot"></span>专项研究
-    </a>
-  </nav>
+  <!-- ================= 封面 ================= -->
+  <section id="cover" class="screen on">
+    <div class="hero">
+      <div>
+        <div class="cv-badge">企业微信 · 新人专属</div>
+        <div class="cv-title">三懂<span class="hl">知识大挑战</span></div>
+        <div class="cv-sub"><span class="ribbon">学以致用 · 挑战自我</span></div>
+        <div class="cv-desc">
+          12 道情境题，约 3 分钟。没有及格线——每题答完顺手点一下你是
+          <b>"拿得准"还是"不太确定"</b>，它和对错一样重要：你拿到的不是一个分数，
+          而是一张<b>「强在哪 · 弱在哪 · 先补什么」</b>的个人地图。
+        </div>
+        <div class="cv-feature">
+          <div class="cv-chip"><div class="e">🧠</div><div class="t">测三懂</div><div class="d">用户·装修·平台</div></div>
+          <div class="cv-chip"><div class="e">🗺️</div><div class="t">出地图</div><div class="d">六段个人报告</div></div>
+          <div class="cv-chip"><div class="e">🚀</div><div class="t">领路线</div><div class="d">直达知识手册</div></div>
+        </div>
+        <div class="cv-form">
+          <div class="cv-input"><label>花名</label><input id="inp-name" placeholder="怎么称呼你？" maxlength="8"></div>
+          <div class="cv-input"><label>部门</label><input id="inp-dept" placeholder="选填" maxlength="16"></div>
+        </div>
+        <div class="cv-start">
+          <button class="btn" onclick="startQuiz()">开 始 答 题</button>
+          <span class="cv-note">共 12 题 ｜ 限时 15 分钟</span>
+        </div>
+        <div class="cv-stats">已有 <b>2,861</b> 位兔厂人完成挑战</div>
+      </div>
 
-  <div class="sidebar-footer">6月培训计划<br>内部文件 · 请勿外传</div>
-</aside>
-
-<!-- ─── Main ─── -->
-<div class="main">
-
-  <!-- Topbar -->
-  <header class="topbar">
-    <button class="hamburger" onclick="toggleSidebar()" aria-label="菜单">
-      <i class="ti ti-menu-2"></i>
-    </button>
-    <div class="search-engines">
-      <button class="engine-btn active" onclick="setEngine(this,'https://www.baidu.com/s?wd=')">百度</button>
-      <button class="engine-btn" onclick="setEngine(this,'https://www.google.com/search?q=')">谷歌</button>
-      <button class="engine-btn" onclick="setEngine(this,'https://www.bing.com/search?q=')">必应</button>
+      <div class="hero-art">
+        <svg class="doodle floaty" style="top:-8px;left:8%" width="34" height="34" viewBox="0 0 24 24"><path d="M12 2l2.4 6.2L21 9l-5 4.4L17.5 21 12 17.3 6.5 21 8 13.4 3 9l6.6-.8z" fill="#FFC53D"/></svg>
+        <svg class="doodle" style="top:30px;right:4%" width="24" height="24" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.7-9.5-9C1 8.5 3 5 6.5 5c2 0 3.6 1.2 4.4 2.6h2.2C13.9 6.2 15.5 5 17.5 5 21 5 23 8.5 21.5 12c-2 4.3-9.5 9-9.5 9z" fill="#FF8FB1"/></svg>
+        <svg class="doodle floaty" style="bottom:0;left:2%" width="26" height="26" viewBox="0 0 24 24"><path d="M12 2l2.4 6.2L21 9l-5 4.4L17.5 21 12 17.3 6.5 21 8 13.4 3 9l6.6-.8z" fill="#5A8FF5"/></svg>
+        <div class="hero-card floaty">
+          <svg width="300" height="225" viewBox="0 0 200 150" aria-hidden="true">
+            <ellipse cx="100" cy="138" rx="62" ry="9" fill="#C9DCF9"/>
+            <rect x="62" y="118" width="76" height="14" rx="5" fill="#3273F2"/>
+            <rect x="72" y="106" width="56" height="14" rx="5" fill="#6FA1F8"/>
+            <rect x="90" y="88" width="20" height="20" fill="#E2A21B"/>
+            <path d="M58 30h84v26c0 26-18 42-42 42S58 82 58 56V30z" fill="#FFC53D"/>
+            <path d="M58 30h84v8H58z" fill="#FFD56A"/>
+            <path d="M58 36h-14c-8 0-12 6-10 13 2.6 9 11 14 22 15" fill="none" stroke="#F0A92C" stroke-width="7" stroke-linecap="round"/>
+            <path d="M142 36h14c8 0 12 6 10 13-2.6 9-11 14-22 15" fill="none" stroke="#F0A92C" stroke-width="7" stroke-linecap="round"/>
+            <path d="M100 46l4.6 9.4 10.4 1.5-7.5 7.3 1.8 10.3-9.3-4.9-9.3 4.9 1.8-10.3-7.5-7.3 10.4-1.5z" fill="#fff"/>
+            <rect x="22" y="96" width="34" height="42" rx="4" fill="#5A8FF5"/>
+            <rect x="28" y="90" width="34" height="42" rx="4" fill="#8FB5F9"/>
+            <circle cx="168" cy="52" r="4" fill="#FF8FB1"/>
+            <circle cx="34" cy="44" r="3" fill="#FFC53D"/>
+            <rect x="152" y="98" width="10" height="3" rx="1.5" fill="#fff" transform="rotate(-18 152 98)"/>
+            <rect x="40" y="64" width="10" height="3" rx="1.5" fill="#fff" transform="rotate(14 40 64)"/>
+          </svg>
+          <div style="margin-top:10px;font-weight:800;font-size:15px;color:var(--ink)">三懂认知报告 · 等你解锁</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">三维分布 · 旅程切片 · 视角指纹 · 学习路线</div>
+        </div>
+      </div>
     </div>
-    <div class="search-wrap">
-      <i class="ti ti-search"></i>
-      <input class="search-input" id="searchInput" type="text" placeholder="搜索培训内容..." onkeydown="handleSearch(event)">
+  </section>
+
+  <!-- ================= 答题 ================= -->
+  <section id="quiz" class="screen">
+    <div class="qz-shell">
+      <div class="qz-top">
+        <div class="no">第 <b id="q-cur">1</b> 题 <span>/ 共 <span id="q-total">12</span> 题</span></div>
+        <div class="qz-timer">⏱ 剩余时间 <i id="q-timer">15:00</i></div>
+      </div>
+      <div class="qz-prog"><i id="q-prog"></i></div>
+      <div class="qz-tags">
+        <span class="qz-tag tg-dim" id="q-dim">懂用户</span>
+        <span class="qz-tag tg-stage" id="q-stage">决策前</span>
+      </div>
+      <div class="qz-card">
+        <div class="qz-q" id="q-text"></div>
+        <div class="qz-opts" id="q-opts"></div>
+        <div class="qz-conf" id="conf">
+          <span class="qz-conf-q">这题你心里有把握吗？</span>
+          <button class="cf cf-sure" onclick="answer(true)">拿得准 ✓</button>
+          <button class="cf cf-unsure" onclick="answer(false)">不太确定</button>
+        </div>
+      </div>
     </div>
-    <button class="search-btn" onclick="doSearch()"><i class="ti ti-arrow-right"></i></button>
-  </header>
+  </section>
 
-  <!-- Content -->
-  <main class="content">
+  <!-- ================= 结果 ================= -->
+  <section id="report" class="screen"></section>
 
-    <!-- ① 知识库运营 -->
-    <section class="section section-a" id="sec-a">
-      <div class="section-header">
-        <div class="sec-icon-wrap"><i class="ti ti-books"></i></div>
-        <div class="sec-info">
-          <div class="sec-title">知识库运营</div>
-          <div class="sec-sub">绩效管理 · 复盘 · 调研</div>
-          <div class="sec-purpose">目的：支持干部关键管理节点（绩效面谈、复盘等）完成管理动作</div>
-        </div>
-        <span class="sec-badge">6月底前推完</span>
-      </div>
-      <div class="section-tabs" id="tabs-a">
-        <button class="tab-btn active" onclick="switchTab('a',0,this)">全部</button>
-        <button class="tab-btn" onclick="switchTab('a',1,this)">绩效管理</button>
-        <button class="tab-btn" onclick="switchTab('a',2,this)">复盘</button>
-        <button class="tab-btn" onclick="switchTab('a',3,this)">调研</button>
-      </div>
-      <div class="section-body">
-        <!-- 全部 -->
-        <div class="tab-panel active" id="a-panel-0">
-          <div class="cards-grid">
-            <a class="card" href="#" target="_blank">
-              <div class="card-icon" style="background:#EFF6FF"><i class="ti ti-chart-bar" style="color:#2563EB;font-size:18px"></i></div>
-              <div class="card-text">
-                <div class="card-title">绩效管理</div>
-                <div class="card-desc">
-                  <span class="card-tag tag-light">轻量</span>
-                  <span style="color:var(--text-muted)">4篇 · 1周内推完</span>
-                </div>
-              </div>
-            </a>
-            <a class="card" href="#" target="_blank">
-              <div class="card-icon" style="background:#EFF6FF"><i class="ti ti-refresh" style="color:#2563EB;font-size:18px"></i></div>
-              <div class="card-text">
-                <div class="card-title">复盘</div>
-                <div class="card-desc">
-                  <span class="card-tag tag-light">轻量</span>
-                  <span style="color:var(--text-muted)">2篇 · 1周内推完</span>
-                </div>
-              </div>
-            </a>
-            <a class="card" href="#" target="_blank">
-              <div class="card-icon" style="background:#EFF6FF"><i class="ti ti-clipboard-text" style="color:#2563EB;font-size:18px"></i></div>
-              <div class="card-text">
-                <div class="card-title">调研</div>
-                <div class="card-desc">
-                  <span class="card-tag tag-light">轻量</span>
-                  <span style="color:var(--text-muted)">2大板块 · 1周内推完</span>
-                </div>
-              </div>
-            </a>
-          </div>
-        </div>
-        <!-- 绩效管理 -->
-        <div class="tab-panel" id="a-panel-1">
-          <div class="cards-grid">
-            <a class="card" href="#" target="_blank">
-              <div class="card-icon" style="background:#EFF6FF"><i class="ti ti-chart-bar" style="color:#2563EB;font-size:18px"></i></div>
-              <div class="card-text">
-                <div class="card-title">绩效管理</div>
-                <div class="card-desc"><span class="card-tag tag-light">轻量</span><span style="color:var(--text-muted)">4篇 · 1周内推完</span></div>
-              </div>
-            </a>
-          </div>
-        </div>
-        <!-- 复盘 -->
-        <div class="tab-panel" id="a-panel-2">
-          <div class="cards-grid">
-            <a class="card" href="#" target="_blank">
-              <div class="card-icon" style="background:#EFF6FF"><i class="ti ti-refresh" style="color:#2563EB;font-size:18px"></i></div>
-              <div class="card-text">
-                <div class="card-title">复盘</div>
-                <div class="card-desc"><span class="card-tag tag-light">轻量</span><span style="color:var(--text-muted)">2篇 · 1周内推完</span></div>
-              </div>
-            </a>
-          </div>
-        </div>
-        <!-- 调研 -->
-        <div class="tab-panel" id="a-panel-3">
-          <div class="cards-grid">
-            <a class="card" href="#" target="_blank">
-              <div class="card-icon" style="background:#EFF6FF"><i class="ti ti-clipboard-text" style="color:#2563EB;font-size:18px"></i></div>
-              <div class="card-text">
-                <div class="card-title">调研</div>
-                <div class="card-desc"><span class="card-tag tag-light">轻量</span><span style="color:var(--text-muted)">2大板块 · 1周内推完</span></div>
-              </div>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ② 专题培训 -->
-    <section class="section section-b" id="sec-b">
-      <div class="section-header">
-        <div class="sec-icon-wrap"><i class="ti ti-chalkboard"></i></div>
-        <div class="sec-info">
-          <div class="sec-title">专题培训</div>
-          <div class="sec-sub">新干部带团队 · 管理沟通 · 用户研讨</div>
-          <div class="sec-purpose">目的：支持干部关键管理节点（绩效面谈、复盘等）完成管理动作</div>
-        </div>
-        <span class="sec-badge">每周一次</span>
-      </div>
-      <div class="section-tabs" id="tabs-b">
-        <button class="tab-btn active" onclick="switchTab('b',0,this)">全部</button>
-        <button class="tab-btn" onclick="switchTab('b',1,this)">第2周</button>
-        <button class="tab-btn" onclick="switchTab('b',2,this)">第3周</button>
-        <button class="tab-btn" onclick="switchTab('b',3,this)">第4周</button>
-        <button class="tab-btn" onclick="switchTab('b',4,this)">备选</button>
-      </div>
-      <div class="section-body">
-        <!-- 全部 -->
-        <div class="tab-panel active" id="b-panel-0">
-          <div class="cards-grid">
-            <a class="card" href="#" target="_blank">
-              <div class="card-icon" style="background:#FFFBEB"><i class="ti ti-users" style="color:#D97706;font-size:18px"></i></div>
-              <div class="card-text">
-                <div class="card-title">新干部如何带领新团队</div>
-                <div class="card-desc"><span class="card-tag tag-mid">中度</span><span class="week-pill wk2">第2周</span><span style="color:var(--text-muted)">每周六</span></div>
-              </div>
-            </a>
-            <a class="card" href="#" target="_blank">
-              <div class="card-icon" style="background:#FFFBEB"><i class="ti ti-flame" style="color:#D97706;font-size:18px"></i></div>
-              <div class="card-text">
-                <div class="card-title">如何开好周会&amp;写好周报</div>
-                <div class="card-desc"><span class="card-tag tag-mid">中度</span><span class="week-pill wk3">第3周</span><span style="color:var(--text-muted)">每周六</span></div>
-              </div>
-            </a>
-            <a class="card" href="#" target="_blank">
-              <div class="card-icon" style="background:#FFFBEB"><i class="ti ti-flame" style="color:#D97706;font-size:18px"></i></div>
-              <div class="card-text">
-                <div class="card-title">如何做好一对一沟通</div>
-                <div class="card-desc"><span class="card-tag tag-mid">中度</span><span class="week-pill wk4">第4周</span><span style="color:var(--text-muted)">每周六</span></div>
-              </div>
-            </a>
-            <a class="card opt" href="#" target="_blank">
-              <div class="card-icon" style="background:#FFFBEB"><i class="ti ti-brain" style="color:#D97706;font-size:18px"></i></div>
-              <div class="card-text">
-                <div class="card-title">用户专题研讨会</div>
-                <div class="card-desc"><span class="card-tag tag-mid">中度</span><span class="week-pill wkalt">备选</span></div>
-              </div>
-            </a>
-          </div>
-        </div>
-        <!-- 第2周 -->
-        <div class="tab-panel" id="b-panel-1">
-          <div class="cards-grid">
-            <a class="card" href="#" target="_blank">
-              <div class="card-icon" style="background:#FFFBEB"><i class="ti ti-users" style="color:#D97706;font-size:18px"></i></div>
-              <div class="card-text">
-                <div class="card-title">新干部如何带领新团队</div>
-                <div class="card-desc"><span class="card-tag tag-mid">中度</span><span class="week-pill wk2">第2周</span><span style="color:var(--text-muted)">每周六</span></div>
-              </div>
-            </a>
-          </div>
-        </div>
-        <!-- 第3周 -->
-        <div class="tab-panel" id="b-panel-2">
-          <div class="cards-grid">
-            <a class="card" href="#" target="_blank">
-              <div class="card-icon" style="background:#FFFBEB"><i class="ti ti-flame" style="color:#D97706;font-size:18px"></i></div>
-              <div class="card-text">
-                <div class="card-title">如何开好周会&amp;写好周报</div>
-                <div class="card-desc"><span class="card-tag tag-mid">中度</span><span class="week-pill wk3">第3周</span><span style="color:var(--text-muted)">每周六</span></div>
-              </div>
-            </a>
-          </div>
-        </div>
-        <!-- 第4周 -->
-        <div class="tab-panel" id="b-panel-3">
-          <div class="cards-grid">
-            <a class="card" href="#" target="_blank">
-              <div class="card-icon" style="background:#FFFBEB"><i class="ti ti-flame" style="color:#D97706;font-size:18px"></i></div>
-              <div class="card-text">
-                <div class="card-title">如何做好一对一沟通</div>
-                <div class="card-desc"><span class="card-tag tag-mid">中度</span><span class="week-pill wk4">第4周</span><span style="color:var(--text-muted)">每周六</span></div>
-              </div>
-            </a>
-          </div>
-        </div>
-        <!-- 备选 -->
-        <div class="tab-panel" id="b-panel-4">
-          <div class="cards-grid">
-            <a class="card opt" href="#" target="_blank">
-              <div class="card-icon" style="background:#FFFBEB"><i class="ti ti-brain" style="color:#D97706;font-size:18px"></i></div>
-              <div class="card-text">
-                <div class="card-title">用户专题研讨会</div>
-                <div class="card-desc"><span class="card-tag tag-mid">中度</span><span class="week-pill wkalt">备选</span></div>
-              </div>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ③ 专项研究 -->
-    <section class="section section-c" id="sec-c">
-      <div class="section-header">
-        <div class="sec-icon-wrap"><i class="ti ti-microscope"></i></div>
-        <div class="sec-info">
-          <div class="sec-title">专项研究</div>
-          <div class="sec-sub">AI重构工作流 · 调研专项支持</div>
-          <div class="sec-purpose">目的：帮助重点部门实现AI转型、做好调研</div>
-        </div>
-        <span class="sec-badge">弹性排期</span>
-      </div>
-      <div class="section-tabs" id="tabs-c">
-        <button class="tab-btn active" onclick="switchTab('c',0,this)">全部</button>
-        <button class="tab-btn" onclick="switchTab('c',1,this)">AI重构工作流</button>
-        <button class="tab-btn" onclick="switchTab('c',2,this)">调研专项支持</button>
-      </div>
-      <div class="section-body">
-        <!-- 全部 -->
-        <div class="tab-panel active" id="c-panel-0">
-          <div class="cards-grid cols-2">
-            <a class="card" href="#" target="_blank">
-              <div class="card-icon" style="background:#F0FDF4"><i class="ti ti-headset" style="color:#059669;font-size:18px"></i></div>
-              <div class="card-text">
-                <div class="card-title">A团队</div>
-                <div class="card-desc"><span class="card-tag tag-heavy">重度</span><span style="color:var(--text-muted)">AI重构工作流</span></div>
-              </div>
-            </a>
-            <a class="card" href="#" target="_blank">
-              <div class="card-icon" style="background:#F0FDF4"><i class="ti ti-phone" style="color:#059669;font-size:18px"></i></div>
-              <div class="card-text">
-                <div class="card-title">B团队</div>
-                <div class="card-desc"><span class="card-tag tag-heavy">重度</span><span style="color:var(--text-muted)">AI重构工作流</span></div>
-              </div>
-            </a>
-            <a class="card" href="#" target="_blank">
-              <div class="card-icon" style="background:#F0FDF4"><i class="ti ti-truck" style="color:#059669;font-size:18px"></i></div>
-              <div class="card-text">
-                <div class="card-title">C团队</div>
-                <div class="card-desc"><span class="card-tag tag-heavy">重度</span><span style="color:var(--text-muted)">AI重构工作流</span></div>
-              </div>
-            </a>
-            <a class="card" href="#" target="_blank">
-              <div class="card-icon" style="background:#F0FDF4"><i class="ti ti-search" style="color:#059669;font-size:18px"></i></div>
-              <div class="card-text">
-                <div class="card-title">调查研究专项支持</div>
-                <div class="card-desc"><span class="card-tag tag-green">重度</span><span style="color:var(--text-muted)">调研专项支持</span></div>
-              </div>
-            </a>
-          </div>
-          <div class="note-bar">AI重构工作流与调研专项支持均为弹性周期，排期以业务方确认为准。</div>
-        </div>
-        <!-- AI重构 -->
-        <div class="tab-panel" id="c-panel-1">
-          <div class="cards-grid">
-            <a class="card" href="#" target="_blank">
-              <div class="card-icon" style="background:#F0FDF4"><i class="ti ti-headset" style="color:#059669;font-size:18px"></i></div>
-              <div class="card-text">
-                <div class="card-title">A团队</div>
-                <div class="card-desc"><span class="card-tag tag-heavy">重度</span><span style="color:var(--text-muted)">AI重构工作流</span></div>
-              </div>
-            </a>
-            <a class="card" href="#" target="_blank">
-              <div class="card-icon" style="background:#F0FDF4"><i class="ti ti-phone" style="color:#059669;font-size:18px"></i></div>
-              <div class="card-text">
-                <div class="card-title">B团队</div>
-                <div class="card-desc"><span class="card-tag tag-heavy">重度</span><span style="color:var(--text-muted)">AI重构工作流</span></div>
-              </div>
-            </a>
-            <a class="card" href="#" target="_blank">
-              <div class="card-icon" style="background:#F0FDF4"><i class="ti ti-truck" style="color:#059669;font-size:18px"></i></div>
-              <div class="card-text">
-                <div class="card-title">C团队</div>
-                <div class="card-desc"><span class="card-tag tag-heavy">重度</span><span style="color:var(--text-muted)">AI重构工作流</span></div>
-              </div>
-            </a>
-          </div>
-        </div>
-        <!-- 调研专项 -->
-        <div class="tab-panel" id="c-panel-2">
-          <div class="cards-grid">
-            <a class="card" href="#" target="_blank">
-              <div class="card-icon" style="background:#F0FDF4"><i class="ti ti-search" style="color:#059669;font-size:18px"></i></div>
-              <div class="card-text">
-                <div class="card-title">调查研究专项支持</div>
-                <div class="card-desc"><span class="card-tag tag-green">重度</span><span style="color:var(--text-muted)">调研专项支持</span></div>
-              </div>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-  </main>
 </div>
 
 <script>
-// ── Search ──
-let searchEngine = 'https://www.baidu.com/s?wd=';
-function setEngine(btn, url) {
-  document.querySelectorAll('.engine-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  searchEngine = url;
-}
-function doSearch() {
-  const q = document.getElementById('searchInput').value.trim();
-  if (q) window.open(searchEngine + encodeURIComponent(q), '_blank');
-}
-function handleSearch(e) { if (e.key === 'Enter') doSearch(); }
+/* ════════ 数据上报配置 ════════
+   把部署好的 Cloudflare Worker 地址填到下面引号里，例如：
+   const REPORT_API = "raspy-dream-4769sandong-relay.adawei433.workers.dev";
+   留空 "" 则不上报，页面其余功能完全不受影响。 */
+const REPORT_API = "";
 
-// ── Sidebar toggle ──
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('overlay').classList.toggle('show');
-}
-function closeSidebar() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('overlay').classList.remove('show');
+function uploadResult(payload){
+  if(!REPORT_API) return;
+  fetch(REPORT_API, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(payload)
+  }).then(r=>r.json())
+    .then(res=>{ if(!res.ok) console.warn("上报失败", res); })
+    .catch(err=>console.warn("上报异常（不影响答题）", err));
 }
 
-// ── Tabs ──
-function switchTab(section, idx, btn) {
-  const panelPrefix = section + '-panel-';
-  document.querySelectorAll('[id^="' + panelPrefix + '"]').forEach(p => p.classList.remove('active'));
-  document.getElementById(panelPrefix + idx).classList.add('active');
-  const tabContainer = document.getElementById('tabs-' + section);
-  tabContainer.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+const LENS_NAME = {SALE:"成交视角", PROC:"流程视角", GUT:"想当然"};
+const DIM = {
+  R:{cn:"懂装修", letter:"装", color:"#3EBE8F", grad:"linear-gradient(90deg,#6BD8B0,#3EBE8F)",
+     title90:"工地明白人", title75:"懂装修小达人"},
+  U:{cn:"懂用户", letter:"用", color:"#3273F2", grad:"linear-gradient(90deg,#6FA1F8,#3273F2)",
+     title90:"用户翻译官", title75:"懂用户小达人"},
+  P:{cn:"懂平台价值", letter:"平", color:"#F7A23B", grad:"linear-gradient(90deg,#FFC53D,#F7A23B)",
+     title90:"平台布道者", title75:"平台价值小能手"}
+};
+const STAGE = {
+  S1:{cn:"决策前", desc:"萌生想法 → 选装修公司"},
+  S2:{cn:"签约付款期", desc:"合同 · 报价 · 资金"},
+  S3:{cn:"施工入住期", desc:"施工 · 质检 · 交付"}
+};
+const QUESTIONS = [
+  {dim:"R", stage:"S1", kp:"面积口径：建筑面积 vs 使用面积",
+   doc:"《懂装修，才懂用户》· 房屋与面积基础",
+   text:"房主告诉你：“我家 60㎡。”你要先确认他在说哪种面积？",
+   why:"懂装修从面积口径开始——这是识别用户语言的第一步。",
+   opts:[
+     {t:"建筑面积", ok:true},
+     {t:"装完之后的面积", lens:"GUT"},
+     {t:"不用确认，60㎡ 就按 60㎡ 报", lens:"PROC"},
+     {t:"先别纠结面积，先聊风格促进意向", lens:"SALE"}]},
+  {dim:"R", stage:"S1", kp:"承包方式：全包的边界",
+   doc:"《懂装修，才懂用户》· 承包方式",
+   text:"客户说：“我想全包。”你第一反应应该理解成？",
+   why:"承包形式的理解深度，决定后续沟通质量。",
+   opts:[
+     {t:"装修公司负责主材 + 辅材 + 施工", ok:true},
+     {t:"客户什么都不用管，睡醒就能住", lens:"GUT"},
+     {t:"全包客单价高，是优质线索，赶紧跟进", lens:"SALE"},
+     {t:"按全包流程走标准 SOP 就行", lens:"PROC"}]},
+  {dim:"R", stage:"S3", kp:"主材与辅材的区分",
+   doc:"《懂装修，才懂用户》· 主辅材知识",
+   text:"如果把装修好的房子倒过来，会掉下来的是什么？",
+   why:"一句话记住主辅材差异：掉下来的是主材，藏在里面的是辅材。",
+   opts:[
+     {t:"主材", ok:true},
+     {t:"辅材", lens:"GUT"},
+     {t:"分不清也没关系，报价单里都含了", lens:"SALE"},
+     {t:"这是工长该懂的，我懂流程就行", lens:"PROC"}]},
+  {dim:"R", stage:"S1", kp:"精装房 ≠ 拎包入住：需求要先问目标",
+   doc:"《懂装修，才懂用户》· 房屋状态与改造类型",
+   text:"用户说：“我买的精装房，还需要装修吗？”最像懂装修的回答是？",
+   why:"精装房常见需求来自风格、储物、厨卫升级——先问目标，再给解法。",
+   opts:[
+     {t:"不一定，看你想改善哪里：软装、局改都可能", ok:true},
+     {t:"要！先砸掉再装，才能体现你家气质", lens:"SALE"},
+     {t:"精装房都一样，直接入住就行", lens:"GUT"},
+     {t:"按平台精装房标准流程给他报一套整装", lens:"PROC"}]},
+  {dim:"U", stage:"S1", kp:"听懂弦外之音：“爸妈也会住”= 适老需求",
+   doc:"《懂用户旅程，才懂用户痛点》· 萌生想法期",
+   text:"用户顺口说了一句：“我爸妈也会住。”这句话的隐含意义是？",
+   why:"装修不是美观问题，是生活结构问题——一句闲话里藏着真需求。",
+   opts:[
+     {t:"要考虑老人动线和安全", ok:true},
+     {t:"只是顺口说说，不用在意", lens:"GUT"},
+     {t:"记进需求字段：常住人口 +2", lens:"PROC"},
+     {t:"机会来了——可以加推适老化升级包", lens:"SALE"}]},
+  {dim:"U", stage:"S1", kp:"“我再看看吧”背后的信任缺口",
+   doc:"《懂用户旅程，才懂用户痛点》· 选装修公司期",
+   text:"当用户说：“我再看看吧。”他最可能在想什么？",
+   why:"这句话的本质不是拒绝，是“我还没遇到让我放心的人”。",
+   opts:[
+     {t:"还没完全信任任何一方", ok:true},
+     {t:"单纯没时间，过几天就回来", lens:"GUT"},
+     {t:"在等更大的优惠，该放限时活动了", lens:"SALE"},
+     {t:"流程上标记“跟进中”，按节奏回访即可", lens:"PROC"}]},
+  {dim:"U", stage:"S2", kp:"临近签约反而犹豫：决策风险感最高点",
+   doc:"《懂用户旅程，才懂用户痛点》· 签订合同期",
+   text:"为什么用户越临近签约，反而越犹豫？",
+   why:"签约是决策成本和风险感的最高点——他要的不是催促，是安全感。",
+   opts:[
+     {t:"决策成本和风险感最高", ok:true},
+     {t:"就是想再砍一轮价", lens:"GUT"},
+     {t:"该用“今日锁价”制造紧迫感了", lens:"SALE"},
+     {t:"合同流程走到哪步是哪步，催一下就签了", lens:"PROC"}]},
+  {dim:"U", stage:"S3", kp:"施工透明 = 被尊重感",
+   doc:"《懂用户旅程，才懂用户痛点》· 装修施工期",
+   text:"如果施工阶段每天都能看到清晰的工地照片和说明，用户更可能觉得？",
+   why:"信息真空制造焦虑；施工透明不是靠说服，是靠“被看见”。",
+   opts:[
+     {t:"被尊重", ok:true},
+     {t:"被打扰，没必要发那么勤", lens:"GUT"},
+     {t:"这是项目经理的拍照任务，完成率达标就好", lens:"PROC"},
+     {t:"是促复购转介绍的好素材", lens:"SALE"}]},
+  {dim:"P", stage:"S2", kp:"先装修后支付：资金托管在银行监管账户",
+   doc:"《先装修后支付，让用户资金更安全》",
+   text:"“先装修后支付”模式下，用户的钱存在哪里？",
+   why:"资金安全的底气来自银行监管账户 + 节点验收后放款。",
+   opts:[
+     {t:"银行监管账户", ok:true},
+     {t:"装企账户，反正有合同约束", lens:"GUT"},
+     {t:"平台账户，平台大，放心", lens:"SALE"},
+     {t:"哪个账户不重要，流程合规就行", lens:"PROC"}]},
+  {dim:"P", stage:"S2", kp:"三管保障：管材料 · 管工期 · 管增项",
+   doc:"《三管保障服务，让用户装修更安心》",
+   text:"三管保障，管的是哪三件事？",
+   why:"三管对准的正是用户最怕的三个坑：假材料、拖工期、乱增项。",
+   opts:[
+     {t:"材料、工期、增项", ok:true},
+     {t:"设计、施工、售后", lens:"GUT"},
+     {t:"价格、品牌、风格", lens:"SALE"},
+     {t:"合同、付款、验收", lens:"PROC"}]},
+  {dim:"P", stage:"S2", kp:"陪同签约审核三件套：图纸 / 报价 / 合同",
+   doc:"《陪同签约，让用户装修更省钱》",
+   text:"陪同签约，主要帮用户审核哪三块？",
+   why:"陪签的本质是第三方把关：签约前规避风险，比事后维权省钱得多。",
+   opts:[
+     {t:"图纸、报价、合同", ok:true},
+     {t:"风格、价格、工期", lens:"GUT"},
+     {t:"主要是帮用户砍价拿优惠", lens:"SALE"},
+     {t:"核对资料齐不齐，签字流程对不对", lens:"PROC"}]},
+  {dim:"P", stage:"S3", kp:"第三方质检核心原则：合格才付款",
+   doc:"《第三方质检，让用户装修质量更放心》",
+   text:"第三方质检最核心的原则是？",
+   why:"“合格才付款”把质量和资金挂钩，立场独立才有公信力。",
+   opts:[
+     {t:"合格才付款", ok:true},
+     {t:"多跑几次工地，跑得勤就是负责", lens:"GUT"},
+     {t:"按节点出报告，报告交了就算完成", lens:"PROC"},
+     {t:"主要价值是给用户安全感、促进签单", lens:"SALE"}]}
+];
+
+let idx=0, picked=-1, answers=[], userName="兔厂新人", userDept="";
+let timerSec=15*60, timerId=null;
+
+function startQuiz(){
+  userName=document.getElementById("inp-name").value.trim()||"兔厂新人";
+  userDept=document.getElementById("inp-dept").value.trim();
+  idx=0; answers=[]; timerSec=15*60;
+  if(timerId)clearInterval(timerId);
+  timerId=setInterval(()=>{
+    if(timerSec>0)timerSec--;
+    const m=String(Math.floor(timerSec/60)).padStart(2,"0"),s=String(timerSec%60).padStart(2,"0");
+    const el=document.getElementById("q-timer"); if(el)el.textContent=`${m}:${s}`;
+  },1000);
+  show("quiz"); renderQ();
 }
-
-// ── Scroll Spy ──
-const sections = ['sec-a', 'sec-b', 'sec-c'];
-const navItems = document.querySelectorAll('.nav-item');
-const topbarH = 64;
-
-function updateSpy() {
-  let current = sections[0];
-  sections.forEach(id => {
-    const el = document.getElementById(id);
-    if (el && el.getBoundingClientRect().top <= topbarH + 40) current = id;
+function show(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on"));
+  document.getElementById(id).classList.add("on");
+  window.scrollTo(0,0);
+}
+function renderQ(){
+  const q=QUESTIONS[idx]; picked=-1;
+  document.getElementById("q-cur").textContent=idx+1;
+  document.getElementById("q-total").textContent=QUESTIONS.length;
+  document.getElementById("q-dim").textContent=DIM[q.dim].cn;
+  document.getElementById("q-stage").textContent="场景 · "+STAGE[q.stage].cn;
+  document.getElementById("q-text").textContent=q.text;
+  document.getElementById("q-prog").style.width=(idx/QUESTIONS.length*100)+"%";
+  const box=document.getElementById("q-opts"); box.innerHTML="";
+  const order=q.opts.map((_,i)=>i);
+  for(let k=0;k<idx%4;k++)order.push(order.shift());
+  order.forEach((oi,vi)=>{
+    const o=q.opts[oi];
+    const d=document.createElement("div");
+    d.className="qz-opt";
+    d.innerHTML=`<span class="k">${"ABCD"[vi]}.</span><span>${o.t}</span><span class="ck"></span>`;
+    d.onclick=()=>{
+      box.querySelectorAll(".qz-opt").forEach(e=>e.classList.remove("sel"));
+      d.classList.add("sel"); picked=oi;
+      document.getElementById("conf").classList.add("show");
+    };
+    box.appendChild(d);
   });
-  navItems.forEach(item => {
-    item.classList.toggle('active', item.getAttribute('href') === '#' + current);
-  });
+  document.getElementById("conf").classList.remove("show");
 }
+function answer(sure){
+  if(picked<0)return;
+  const q=QUESTIONS[idx],opt=q.opts[picked];
+  answers.push({qi:idx,correct:!!opt.ok,sure,lens:opt.ok?null:(opt.lens||null)});
+  idx++;
+  if(idx<QUESTIONS.length){renderQ();}
+  else{clearInterval(timerId); buildReport(); show("report");}
+}
+function pct(a,b){return b?Math.round(a/b*100):0;}
 
-document.querySelector('.main').addEventListener('scroll', updateSpy, { passive: true });
-window.addEventListener('scroll', updateSpy, { passive: true });
+function buildReport(){
+  const dims={R:{c:0,n:0},U:{c:0,n:0},P:{c:0,n:0}};
+  const stages={S1:{c:0,n:0},S2:{c:0,n:0},S3:{c:0,n:0}};
+  let master=0,feel=0,known=0,danger=0;
+  const dangerList=[],knownList=[];
+  const lens={SALE:0,PROC:0,GUT:0};
+  answers.forEach(a=>{
+    const q=QUESTIONS[a.qi];
+    dims[q.dim].n++; stages[q.stage].n++;
+    if(a.correct){dims[q.dim].c++; stages[q.stage].c++;}
+    if(a.correct&&a.sure)master++;
+    else if(a.correct&&!a.sure)feel++;
+    else if(!a.correct&&!a.sure){known++;knownList.push(q);}
+    else{danger++;dangerList.push(q);}
+    if(!a.correct&&a.lens)lens[a.lens]++;
+  });
+  const dimScores=Object.keys(dims).map(k=>({k,s:pct(dims[k].c,dims[k].n)})).sort((a,b)=>b.s-a.s);
+  const totalC=answers.filter(a=>a.correct).length;
+  const totalPct=pct(totalC,answers.length);
+  const score=totalPct;
+
+  const top=dimScores[0], low=dimScores[2];
+  let verdict, badge=null;
+  if(dimScores.every(d=>d.s>=90)){verdict="三懂全能";badge="三懂全能 🏆";}
+  else if(dimScores.every(d=>d.s>=75)&&top.s>=90){verdict=`${DIM[top.k].cn} × ${DIM[dimScores[1].k].cn}`;badge="全能兔 🐰";}
+  else{
+    verdict=`${DIM[top.k].cn} × ${DIM[dimScores[1].k].cn}`;
+    if(top.s>=90)badge=DIM[top.k].title90;
+    else if(top.s>=75)badge=DIM[top.k].title75;
+  }
+  let mod="";
+  if(danger>=2)mod=" · 待校准";
+  else if(master/answers.length>=0.7&&danger===0)mod=" · 稳";
+  if(badge)badge+=mod;
+
+  const percentile=Math.min(96,Math.max(8,Math.round(totalPct*0.9+master*3-danger*4)));
+
+  let overall=`你的最强项是<b>「${DIM[top.k].cn}」（${top.s}%）</b>`;
+  overall+=top.s===100?"，全对——这一块可以当你的对外名片":"";
+  overall+=`；相对薄弱的是<b>「${DIM[low.k].cn}」（${low.s}%）</b>`;
+  overall+=low.s>=75?"，但仍在扎实区间，差距属于打磨而非补课。":"，这是接下来学习路线的主战场。";
+  if(danger>0)overall+=` 特别注意：有 <span class="hl">${danger}</span> 道题你<b>答错了、却很笃定</b>——这种"危险盲区"会在真实用户面前不打招呼地暴露，已置顶到你的学习路线。`;
+  else if(feel>=3)overall+=` 另外有 ${feel} 道题你答对了却没把握——你的真实功底<b>好于你的自我评估</b>，可以更自信一点。`;
+  else overall+=" 你的自我评估与实际表现基本吻合，认知校准度不错。";
+
+  const stageNote={
+    S1:"用户在这一段最焦虑\u201C信不信得过\u201D——听懂弦外之音、对齐面积/承包口径，是信任的第一步。",
+    S2:"签约付款期是风险感最高点。三管、陪签、先装修后支付，全是为这一刻准备的弹药。",
+    S3:"施工期的信任靠\u201C被看见\u201D维持：透明、质检、合格才付款，决定用户最后记住什么。"};
+
+  const wrongTotal=lens.SALE+lens.PROC+lens.GUT;
+  let lensBlock="";
+  if(wrongTotal>=2){
+    const arr=Object.keys(lens).map(k=>({k,v:lens[k]})).sort((a,b)=>b.v-a.v);
+    const tl=arr[0];
+    const txt={
+      SALE:"你的失分集中在<b>成交视角</b>——容易把\u201C帮用户判断\u201D做成\u201C推用户成交\u201D。试着在每次想促单前先问：用户此刻缺的是信息、信任，还是临门一脚？",
+      PROC:"你的失分集中在<b>流程视角</b>——容易把用户的情绪信号翻译成流程节点。流程保证事情做完，但用户记住的是\u201C有没有人懂我\u201D。",
+      GUT:"你的失分集中在<b>想当然</b>——用直觉补全了用户没说的部分。多问一个确认问题，比猜十次都准。"};
+    lensBlock=`<div class="card">
+      <div class="sec-tt"><span class="ico">🔍</span><b>错题的视角指纹</b><span class="tag">失分 ${wrongTotal} 次</span></div>
+      <div class="lensrow">${arr.map((l,i)=>`
+        <div class="lens ${i===0&&l.v>0?'top':''}"><div class="n">${l.v}</div><div class="t">${LENS_NAME[l.k]}</div></div>`).join("")}
+      </div>
+      <div class="prose">${tl.v>0?txt[tl.k]:""}</div>
+    </div>`;
+  }
+
+  const routes=[];
+  dangerList.forEach(q=>routes.push({kp:q.kp,doc:q.doc,why:"你答错且很笃定——优先校准，避免在真实用户面前暴露。"}));
+  knownList.forEach(q=>routes.push({kp:q.kp,doc:q.doc,why:"你自己也知道没把握——补上最快，性价比最高。"}));
+  if(routes.length===0){
+    routes.push({kp:`「${DIM[low.k].cn}」整体进阶`,
+      doc: low.k==="U"?"《懂用户旅程，才懂用户痛点》":(low.k==="R"?"《懂装修，才懂用户》":"《知识手册：平台产品服务价值》"),
+      why:"没有明显盲区，按相对弱项做系统进阶即可。"});
+  }
+  const routeHtml=routes.slice(0,4).map((r,i)=>`
+    <div class="route"><div class="no">${i+1}</div>
+      <div class="bd"><b>${r.kp}</b><br>${r.why}<br><span class="doc">📖 ${r.doc}</span></div>
+    </div>`).join("")
+    +(routes.length>4?`<div class="prose" style="font-size:12.5px">其余 ${routes.length-4} 个知识点已记录，将随复测一并覆盖。</div>`:"");
+
+  const strengths=[];
+  dimScores.forEach(d=>{
+    if(d.s>=75){
+      const m={R:"专业语言过关：面积、承包方式、主辅材这些\u201C行话\u201D你接得住，和用户、装企有共同语言。",
+        U:"能听懂弦外之音：用户的犹豫、闲话、焦虑，你倾向于先翻译情绪再处理事情——这是最难教的能力。",
+        P:"价值讲得清：三管、陪签、先装修后支付，你不只记得住条款，还说得出它解决谁的什么恐惧。"};
+      strengths.push({t:`「${DIM[d.k].cn}」${d.s}%`,d:m[d.k]});
+    }});
+  if(master>=8)strengths.push({t:"认知校准度高",d:`${master} 道题\u201C拿得准且答对\u201D——你的\u201C我确定\u201D在团队里有含金量。`});
+  if(strengths.length===0)strengths.push({t:"起点诚实",d:"暂时没有突出强项，但你的作答没有伪装把握——这恰恰是学习速度最快的起点状态。"});
+  const strengthHtml=strengths.slice(0,3).map((s,i)=>`
+    <div class="str"><span class="no">0${i+1}</span><b>${s.t}</b><br>${s.d}</div>`).join("");
+
+  const dangerHtml=dangerList.length?`
+    <div class="warnbox"><b>⚠ 危险盲区清单（详细路由见「学习路线」）</b>${
+      dangerList.map(q=>`· ${q.kp}`).join("<br>")}</div>`
+    :`<div class="prose" style="margin-top:10px">本次没有"笃定却答错"的危险盲区——这是报告里最值得高兴的一行 🎉</div>`;
+
+  const dimHtml=dimScores.map(d=>`
+    <div class="dimbar">
+      <div class="e" style="background:${DIM[d.k].color}">${DIM[d.k].letter}</div>
+      <div class="body"><div class="nm">${DIM[d.k].cn}</div>
+        <div class="tr"><i style="width:${d.s}%;background:${DIM[d.k].grad}"></i></div></div>
+      <div class="pc" style="color:${DIM[d.k].color}">${d.s}<span style="font-size:12px">%</span></div>
+    </div>`).join("");
+
+  const stageHtml=Object.keys(stages).map(k=>{
+    const s=stages[k],p=pct(s.c,s.n);
+    const col=p>=75?"var(--green)":(p>=50?"var(--blue)":"var(--red)");
+    const grad=p>=75?"linear-gradient(90deg,#6BD8B0,#3EBE8F)":(p>=50?"linear-gradient(90deg,#6FA1F8,#3273F2)":"linear-gradient(90deg,#F89A90,#F2685C)");
+    return `<div class="stg">
+      <div class="pillrow"><span><span class="nm">${STAGE[k].cn}</span> <span class="n">n=${s.n} · ${STAGE[k].desc}</span></span>
+      <span class="pc" style="color:${col}">${p}%</span></div>
+      <div class="tr"><i style="width:${p}%;background:${grad}"></i></div>
+      <div class="d">${stageNote[k]}</div>
+    </div>`;}).join("");
+
+  /* ── 上报到飞书多维表格（经 Worker 中转，异步不阻塞渲染） ── */
+  uploadResult({
+    name: userName,
+    dept: userDept,
+    score: score,
+    r: dims.R.n ? pct(dims.R.c, dims.R.n) : 0,
+    u: dims.U.n ? pct(dims.U.c, dims.U.n) : 0,
+    p: dims.P.n ? pct(dims.P.c, dims.P.n) : 0,
+    danger: danger,
+    badge: badge || "—",
+    verdict: verdict,
+    percentile: percentile,
+    detail: answers.map(a => ({
+      kp: QUESTIONS[a.qi].kp,
+      dim: QUESTIONS[a.qi].dim,
+      stage: QUESTIONS[a.qi].stage,
+      correct: a.correct,
+      sure: a.sure,
+      lens: a.lens
+    }))
+  });
+
+  document.getElementById("report").innerHTML=`
+    <div class="rs-hero">
+      <div class="rs-score-card">
+        <div class="rs-medal">
+          <svg width="58" height="66" viewBox="0 0 56 64">
+            <path d="M18 0h8l6 22h-8z" fill="#F2685C"/><path d="M38 0h-8l-6 22h8z" fill="#D94F44"/>
+            <circle cx="28" cy="40" r="20" fill="#FFC53D" stroke="#F0A92C" stroke-width="3"/>
+            <path d="M28 28l3.4 6.9 7.6 1.1-5.5 5.4 1.3 7.6-6.8-3.6-6.8 3.6 1.3-7.6-5.5-5.4 7.6-1.1z" fill="#fff"/>
+          </svg>
+        </div>
+        <div class="rs-yay">${score>=75?"太棒啦！":"完成挑战！"}</div>
+        <div class="rs-cap">${userName}${userDept?" · "+userDept:""} 的三懂认知报告</div>
+        <div class="rs-sc-num">${score}<span>%</span></div>
+        <div class="rs-sc-pct">超过了 <b>${percentile}%</b> 的同期新人</div>
+        <div class="rs-sc-note">分位为 DEMO 演示基线，正式版按真实同期队列计算</div>
+        <div><span class="rs-verdict">${verdict}</span></div>
+        ${badge?`<div><span class="rs-title-chip">🎖 称号 · ${badge}</span></div>`:""}
+      </div>
+      <div class="card">
+        <div class="sec-tt"><span class="ico">📊</span><b>三维分布</b><span class="tag">${answers.length} 题</span></div>
+        ${dimHtml}
+        <div class="prose" style="margin-top:8px">${overall}</div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <div class="sec-tt"><span class="ico">🗺️</span><b>用户旅程切片</b><span class="tag">你在哪段最在线</span></div>
+        ${stageHtml}
+      </div>
+      <div class="card">
+        <div class="sec-tt"><span class="ico">🧭</span><b>认知质量</b><span class="tag">把握 × 对错</span></div>
+        <div class="quad">
+          <div class="qd qd1"><div class="n">${master}</div><div class="t">真功夫</div><div class="d">拿得准 · 答对</div></div>
+          <div class="qd qd2"><div class="n">${feel}</div><div class="t">隐性手感</div><div class="d">没把握 · 答对</div></div>
+          <div class="qd qd3"><div class="n">${known}</div><div class="t">已知盲区</div><div class="d">没把握 · 答错</div></div>
+          <div class="qd qd4"><div class="n">${danger}</div><div class="t">危险盲区</div><div class="d">拿得准 · 答错</div></div>
+        </div>
+        ${dangerHtml}
+      </div>
+    </div>
+
+    ${lensBlock?`
+    <div class="grid2">
+      ${lensBlock}
+      <div class="card">
+        <div class="sec-tt"><span class="ico">🌟</span><b>核心优势</b></div>
+        ${strengthHtml}
+      </div>
+    </div>`:`
+    <div class="card fullcard">
+      <div class="sec-tt"><span class="ico">🌟</span><b>核心优势</b></div>
+      ${strengthHtml}
+    </div>`}
+
+    <div class="card fullcard">
+      <div class="sec-tt"><span class="ico">🚀</span><b>你的学习路线</b><span class="tag">按优先级</span></div>
+      <div class="routes-grid">${routeHtml}</div>
+      <div class="prose" style="font-size:12.5px;margin-top:14px">学完以上内容可<b>复测一次</b>（只重测薄弱点，5 题以内），确认缺口已补上 ✓</div>
+    </div>
+
+    <div class="rs-btns">
+      <button class="btn-line" onclick="location.reload()">再来一次</button>
+      <button class="btn" style="padding:14px 56px;font-size:15px" onclick="alert('正式版将跳转至对应知识手册 📖')">去学习 →</button>
+    </div>
+    <div class="rs-foot">三懂知识大挑战 · DEMO · FOR ${userName}</div>
+  `;
+}
 </script>
 </body>
 </html>
