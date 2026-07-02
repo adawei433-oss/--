@@ -298,6 +298,7 @@
   .route .doc{
     display:inline-block;margin-top:6px;background:#fff;color:var(--blue);
     font-size:11.5px;font-weight:700;padding:4px 14px;border-radius:99px;
+    text-decoration:none;
   }
   .str{margin-bottom:14px;font-size:14px;color:var(--ink2);line-height:1.9;}
   .str b{color:var(--ink);}
@@ -338,7 +339,7 @@
         <div class="cv-title">三懂<span class="hl">知识大挑战</span></div>
         <div class="cv-sub"><span class="ribbon">学以致用 · 挑战自我</span></div>
         <div class="cv-desc">
-          12 道情境题，约 3 分钟。没有及格线——每题答完顺手点一下你是
+          20 道情境题，约 5 分钟。没有及格线——每题答完顺手点一下你是
           <b>"拿得准"还是"不太确定"</b>，它和对错一样重要：你拿到的不是一个分数，
           而是一张<b>「强在哪 · 弱在哪 · 先补什么」</b>的个人地图。
         </div>
@@ -353,7 +354,7 @@
         </div>
         <div class="cv-start">
           <button class="btn" onclick="startQuiz()">开 始 答 题</button>
-          <span class="cv-note">共 12 题 ｜ 限时 15 分钟</span>
+          <span class="cv-note">共 20 题 ｜ 限时 15 分钟</span>
         </div>
         <div class="cv-stats">已有 <b>2,861</b> 位兔厂人完成挑战</div>
       </div>
@@ -391,7 +392,7 @@
   <section id="quiz" class="screen">
     <div class="qz-shell">
       <div class="qz-top">
-        <div class="no">第 <b id="q-cur">1</b> 题 <span>/ 共 <span id="q-total">12</span> 题</span></div>
+        <div class="no">第 <b id="q-cur">1</b> 题 <span>/ 共 <span id="q-total">20</span> 题</span></div>
         <div class="qz-timer">⏱ 剩余时间 <i id="q-timer">15:00</i></div>
       </div>
       <div class="qz-prog"><i id="q-prog"></i></div>
@@ -448,6 +449,32 @@ const STAGE = {
   S2:{cn:"签约付款期", desc:"合同 · 报价 · 资金"},
   S3:{cn:"施工入住期", desc:"施工 · 质检 · 交付"}
 };
+const MATERIALS = [
+  {key:"洞察行业", title:"洞察行业：装修行业趋势洞察", url:"https://oa.to8to.com/training/collection-article/detail?id=1&collection_id=10"},
+  {key:"基础知识", title:"基础知识：懂装修基础概念，是懂用户的基础", url:"https://oa.to8to.com/training/collection-article/detail?id=3&collection_id=10"},
+  {key:"懂装修，才懂用户", title:"基础知识：懂装修基础概念，是懂用户的基础", url:"https://oa.to8to.com/training/collection-article/detail?id=3&collection_id=10"},
+  {key:"装修前", title:"一个典型业主的装修流程——装修前", url:"https://oa.to8to.com/training/collection-article/detail?id=2&collection_id=10"},
+  {key:"签约后", title:"一个典型业主的装修旅程——签约后", url:"https://oa.to8to.com/training/collection-article/detail?id=103&collection_id=10"},
+  {key:"懂用户旅程", title:"一个典型业主的装修流程——装修前", url:"https://oa.to8to.com/training/collection-article/detail?id=2&collection_id=10"},
+  {key:"知识手册：平台产品服务价值", title:"【知识手册】平台产品服务价值", url:"https://oa.to8to.com/training/collection/detail?id=7"},
+  {key:"精准匹配", title:"精准匹配，让用户选择更省心", url:"https://oa.to8to.com/training/collection-article/detail?id=9&collection_id=7"},
+  {key:"懂量房排雷", title:"懂量房排雷，帮用户理清需求", url:"https://oa.to8to.com/training/collection-article/detail?id=10&collection_id=7"},
+  {key:"三管保障", title:"三管保障服务，让用户装修更安心", url:"https://oa.to8to.com/training/collection-article/detail?id=85&collection_id=7"},
+  {key:"陪同签约", title:"陪同签约，让用户装修更省钱", url:"https://oa.to8to.com/training/collection-article/detail?id=11&collection_id=7"},
+  {key:"先装修后支付", title:"先装修后支付，让用户资金更安全", url:"https://oa.to8to.com/training/collection-article/detail?id=12&collection_id=7"},
+  {key:"正品材料", title:"正品材料&社群团购", url:"https://oa.to8to.com/training/collection-article/detail?id=13&collection_id=7"},
+  {key:"第三方质检", title:"第三方质检，让用户装修质量更放心", url:"https://oa.to8to.com/training/collection-article/detail?id=14&collection_id=7"}
+];
+function materialFor(doc){
+  if(!doc) return null;
+  if(doc.includes("签订合同")||doc.includes("施工期")||doc.includes("签约后")) return MATERIALS.find(m=>m.key==="签约后");
+  return MATERIALS.find(m=>doc.includes(m.key)) || null;
+}
+function materialLink(doc){
+  const m=materialFor(doc);
+  if(!m) return `<span class="doc">📖 ${doc}</span>`;
+  return `<a class="doc" href="${m.url}" target="_blank" rel="noopener">📖 ${m.title}</a>`;
+}
 const QUESTIONS = [
   {dim:"R", stage:"S1", kp:"面积口径：建筑面积 vs 使用面积",
    doc:"《懂装修，才懂用户》· 房屋与面积基础",
@@ -556,7 +583,79 @@ const QUESTIONS = [
      {t:"合格才付款", ok:true},
      {t:"多跑几次工地，跑得勤就是负责", lens:"GUT"},
      {t:"按节点出报告，报告交了就算完成", lens:"PROC"},
-     {t:"主要价值是给用户安全感、促进签单", lens:"SALE"}]}
+     {t:"主要价值是给用户安全感、促进签单", lens:"SALE"}]},
+  {dim:"R", stage:"S1", kp:"装修量级：微装",
+   doc:"《基础知识：懂装修基础概念，是懂用户的基础》",
+   text:"朋友准备装修房子，他说：“我只是刷个漆换个灯。”他属于哪种装修？",
+   why:"不同装修量级，对应不同用户需求和服务深度。",
+   opts:[
+     {t:"微装", ok:true},
+     {t:"局改", lens:"GUT"},
+     {t:"整装", lens:"PROC"},
+     {t:"这属于租客", lens:"SALE"}]},
+  {dim:"R", stage:"S1", kp:"半包选择：先看时间能力和材料经验",
+   doc:"《基础知识：懂装修基础概念，是懂用户的基础》",
+   text:"用户说：“我选半包，是不是能更省钱？”你最稳妥的回应是：",
+   why:"懂装修的人会先帮助用户理解决策条件，而不是直接推销售话术。",
+   opts:[
+     {t:"看你的时间、能力和材料选择经验", ok:true},
+     {t:"半包 = 白赚", lens:"GUT"},
+     {t:"全包 = 被坑", lens:"SALE"},
+     {t:"半包都是 DIY 高手选的", lens:"PROC"}]},
+  {dim:"R", stage:"S1", kp:"房屋起点：自建房先确认状态",
+   doc:"《基础知识：懂装修基础概念，是懂用户的基础》",
+   text:"用户说：“我想装个自建房，周期会多长？”你第一反应是什么？",
+   why:"先理解房屋起点，才能判断需求边界和后续装修周期。",
+   opts:[
+     {t:"先确认房屋起点状态：毛坯还是自建毛坯", ok:true},
+     {t:"先报价格让他冷静", lens:"SALE"},
+     {t:"先告诉他可能拆到破产", lens:"GUT"},
+     {t:"先说祝你好运", lens:"PROC"}]},
+  {dim:"U", stage:"S1", kp:"“你说了算”是在等专业边界",
+   doc:"《一个典型业主的装修流程——装修前》",
+   text:"用户说：“我不懂装修，你说了算吧。”正确理解是什么？",
+   why:"这句话不是把权交给你，而是在等你展示专业边界和责任感。",
+   opts:[
+     {t:"他在等你展示专业边界", ok:true},
+     {t:"他其实懂，但不想说", lens:"GUT"},
+     {t:"他放弃控制，全靠你背锅", lens:"PROC"},
+     {t:"他累了随便了", lens:"SALE"}]},
+  {dim:"U", stage:"S1", kp:"碎片化效果图让用户越看越乱",
+   doc:"《一个典型业主的装修流程——装修前》",
+   text:"以下哪种信息，最容易让第一次装修的用户越看越乱？",
+   why:"第一次装修的用户缺的不是更多图片，而是能帮助判断的结构化信息。",
+   opts:[
+     {t:"不同风格的碎片化效果图", ok:true},
+     {t:"单一户型完整案例", lens:"GUT"},
+     {t:"同户型不同预算对比", lens:"PROC"},
+     {t:"清晰的装修流程图", lens:"SALE"}]},
+  {dim:"U", stage:"S2", kp:"签完合同后的焦虑",
+   doc:"《一个典型业主的装修旅程——签约后》",
+   text:"为什么很多用户签完合同反而更焦虑？",
+   why:"签约后用户会同时担心钱、态度和后续过程，安全感需要继续被维护。",
+   opts:[
+     {t:"以上都是", ok:true},
+     {t:"钱已经交了", lens:"GUT"},
+     {t:"怕后面态度变", lens:"SALE"},
+     {t:"不知道接下来会发生什么", lens:"PROC"}]},
+  {dim:"P", stage:"S1", kp:"精准匹配：需求标签与装企擅长匹配",
+   doc:"《精准匹配，让用户选择更省心》",
+   text:"用户问：“你们怎么知道推荐的装修公司适合我？”你最靠谱的回答是？",
+   why:"精准匹配不是简单多推荐几家，而是根据用户需求和装企能力减少选择风险。",
+   opts:[
+     {t:"根据你的需求标签和装企擅长匹配", ok:true},
+     {t:"我们合作公司多", lens:"SALE"},
+     {t:"系统随便挑几家", lens:"GUT"},
+     {t:"哪家接单快就推荐哪家", lens:"PROC"}]},
+  {dim:"P", stage:"S1", kp:"量房排雷：提前发现隐患",
+   doc:"《懂量房排雷，帮用户理清需求》",
+   text:"量房排雷的第一价值是？",
+   why:"量房排雷用专业视角提前发现隐患，帮助用户把问题讲清楚、把风险往前拦。",
+   opts:[
+     {t:"提前发现隐患", ok:true},
+     {t:"出设计图", lens:"GUT"},
+     {t:"报价格", lens:"PROC"},
+     {t:"快速签约", lens:"SALE"}]}
 ];
 
 let idx=0, picked=-1, answers=[], userName="兔厂新人", userDept="";
@@ -607,7 +706,7 @@ function renderQ(){
 function answer(sure){
   if(picked<0)return;
   const q=QUESTIONS[idx],opt=q.opts[picked];
-  answers.push({qi:idx,correct:!!opt.ok,sure,lens:opt.ok?null:(opt.lens||null)});
+  answers.push({qi:idx,correct:!!opt.ok,sure,lens:opt.ok?null:(opt.lens||null),answer:opt.t});
   idx++;
   if(idx<QUESTIONS.length){renderQ();}
   else{clearInterval(timerId); buildReport(); show("report");}
@@ -692,9 +791,13 @@ function buildReport(){
   }
   const routeHtml=routes.slice(0,4).map((r,i)=>`
     <div class="route"><div class="no">${i+1}</div>
-      <div class="bd"><b>${r.kp}</b><br>${r.why}<br><span class="doc">📖 ${r.doc}</span></div>
+      <div class="bd"><b>${r.kp}</b><br>${r.why}<br>${materialLink(r.doc)}</div>
     </div>`).join("")
     +(routes.length>4?`<div class="prose" style="font-size:12.5px">其余 ${routes.length-4} 个知识点已记录，将随复测一并覆盖。</div>`:"");
+  const firstRouteMaterial=materialFor(routes[0]?.doc);
+  const learnAction=firstRouteMaterial
+    ? `window.open('${firstRouteMaterial.url}', '_blank', 'noopener')`
+    : `alert('暂无匹配学习材料')`;
 
   const strengths=[];
   dimScores.forEach(d=>{
@@ -732,8 +835,12 @@ function buildReport(){
       <div class="tr"><i style="width:${p}%;background:${grad}"></i></div>
       <div class="d">${stageNote[k]}</div>
     </div>`;}).join("");
+  const answerDetail=answers.map((a,i)=>{
+    const q=QUESTIONS[a.qi];
+    return `${i+1}. ${DIM[q.dim].cn}：${a.answer}`;
+  }).join("\n");
 
-  /* ── 上报到飞书多维表格（经 Worker 中转，异步不阻塞渲染） ── */
+  /* ── 上报到智能表格（经 Worker 中转，异步不阻塞渲染） ── */
   uploadResult({
     name: userName,
     dept: userDept,
@@ -745,14 +852,7 @@ function buildReport(){
     badge: badge || "—",
     verdict: verdict,
     percentile: percentile,
-    detail: answers.map(a => ({
-      kp: QUESTIONS[a.qi].kp,
-      dim: QUESTIONS[a.qi].dim,
-      stage: QUESTIONS[a.qi].stage,
-      correct: a.correct,
-      sure: a.sure,
-      lens: a.lens
-    }))
+    detail: answerDetail
   });
 
   document.getElementById("report").innerHTML=`
@@ -813,12 +913,12 @@ function buildReport(){
     <div class="card fullcard">
       <div class="sec-tt"><span class="ico">🚀</span><b>你的学习路线</b><span class="tag">按优先级</span></div>
       <div class="routes-grid">${routeHtml}</div>
-      <div class="prose" style="font-size:12.5px;margin-top:14px">学完以上内容可<b>复测一次</b>（只重测薄弱点，5 题以内），确认缺口已补上 ✓</div>
+      <div class="prose" style="font-size:12.5px;margin-top:14px">点击材料标签即可进入对应学习内容。学完以上内容可<b>复测一次</b>（只重测薄弱点，5 题以内），确认缺口已补上 ✓</div>
     </div>
 
     <div class="rs-btns">
       <button class="btn-line" onclick="location.reload()">再来一次</button>
-      <button class="btn" style="padding:14px 56px;font-size:15px" onclick="alert('正式版将跳转至对应知识手册 📖')">去学习 →</button>
+      <button class="btn" style="padding:14px 56px;font-size:15px" onclick="${learnAction}">去学习 →</button>
     </div>
     <div class="rs-foot">三懂知识大挑战 · DEMO · FOR ${userName}</div>
   `;
