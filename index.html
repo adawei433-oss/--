@@ -658,7 +658,7 @@ const QUESTIONS = [
      {t:"快速签约", lens:"SALE"}]}
 ];
 
-let idx=0, picked=-1, answers=[], userName="兔厂新人", userDept="";
+let idx=0, picked=-1, pickedLetter="", answers=[], userName="兔厂新人", userDept="";
 let timerSec=15*60, timerId=null;
 
 function startQuiz(){
@@ -679,7 +679,7 @@ function show(id){
   window.scrollTo(0,0);
 }
 function renderQ(){
-  const q=QUESTIONS[idx]; picked=-1;
+  const q=QUESTIONS[idx]; picked=-1; pickedLetter="";
   document.getElementById("q-cur").textContent=idx+1;
   document.getElementById("q-total").textContent=QUESTIONS.length;
   document.getElementById("q-dim").textContent=DIM[q.dim].cn;
@@ -696,7 +696,7 @@ function renderQ(){
     d.innerHTML=`<span class="k">${"ABCD"[vi]}.</span><span>${o.t}</span><span class="ck"></span>`;
     d.onclick=()=>{
       box.querySelectorAll(".qz-opt").forEach(e=>e.classList.remove("sel"));
-      d.classList.add("sel"); picked=oi;
+      d.classList.add("sel"); picked=oi; pickedLetter="ABCD"[vi];
       document.getElementById("conf").classList.add("show");
     };
     box.appendChild(d);
@@ -706,7 +706,7 @@ function renderQ(){
 function answer(sure){
   if(picked<0)return;
   const q=QUESTIONS[idx],opt=q.opts[picked];
-  answers.push({qi:idx,correct:!!opt.ok,sure,lens:opt.ok?null:(opt.lens||null),answer:opt.t});
+  answers.push({qi:idx,correct:!!opt.ok,sure,lens:opt.ok?null:(opt.lens||null),answer:opt.t,letter:pickedLetter});
   idx++;
   if(idx<QUESTIONS.length){renderQ();}
   else{clearInterval(timerId); buildReport(); show("report");}
@@ -837,7 +837,7 @@ function buildReport(){
     </div>`;}).join("");
   const answerDetail=answers.map((a,i)=>{
     const q=QUESTIONS[a.qi];
-    return `${i+1}. ${DIM[q.dim].cn}：${a.answer}`;
+    return `${i+1}. ${DIM[q.dim].cn}：${q.text}；学员答案：${a.letter}. ${a.answer}（${a.correct?"正确":"错误"}）`;
   }).join("\n");
 
   /* ── 上报到智能表格（经 Worker 中转，异步不阻塞渲染） ── */
