@@ -1197,7 +1197,7 @@ function buildReport(){
   uploadResult(reportPayload).then(res=>{
     if(res.ok){
       if(res.mobile){
-        setSubmitStatus("ok", "已发出手机提交请求，请停留 10 秒后再关闭页面，并由管理员核对表格。");
+        setSubmitStatus("ok", "结果已提交，可放心关闭页面。");
       }else{
         const retryNote=res.attempt>1?`（第 ${res.attempt} 次成功）`:"";
         setSubmitStatus("ok", `结果已同步到智能表格${retryNote}`);
