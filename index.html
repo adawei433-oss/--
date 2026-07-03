@@ -233,6 +233,25 @@
     display:inline-block;margin-top:10px;background:var(--pink-soft);color:#D9537C;
     font-size:12.5px;font-weight:700;padding:5px 18px;border-radius:99px;letter-spacing:.1em;
   }
+  .submit-status{
+    margin:-6px 0 18px;background:#fff;border:2px solid #E4ECFA;border-radius:18px;
+    box-shadow:0 6px 16px rgba(50,115,242,.08);padding:13px 16px;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    font-size:13px;color:var(--ink2);font-weight:700;line-height:1.7;
+  }
+  .submit-status::before{
+    content:"";width:10px;height:10px;border-radius:50%;background:var(--blue);flex:none;
+    box-shadow:0 0 0 5px var(--blue-soft);
+  }
+  .submit-status.ok{border-color:#BDEBD8;background:#F3FCF8;color:#1E8A63;}
+  .submit-status.ok::before{background:var(--green);box-shadow:0 0 0 5px var(--green-soft);}
+  .submit-status.fail{border-color:#F7C3BE;background:#FFF6F5;color:#A03D32;}
+  .submit-status.fail::before{background:var(--red);box-shadow:0 0 0 5px var(--red-soft);}
+  .submit-status .msg{flex:1;}
+  .submit-status button{
+    border:none;border-radius:999px;background:var(--blue);color:#fff;
+    padding:8px 16px;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;
+  }
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;align-items:stretch;}
   .grid2 > .card{height:100%;display:flex;flex-direction:column;}
   .fullcard{margin-bottom:24px;}
@@ -423,16 +442,72 @@
    const REPORT_API = "https://raspy-dream-4769sandong-relay.adawei433.workers.dev";
    留空 "" 则不上报，页面其余功能完全不受影响。 */
 const REPORT_API = "https://raspy-dream-4769sandong-relay.adawei433.workers.dev";
+const REPORT_TIMEOUT_MS = 10000;
+const REPORT_MAX_TRIES = 3;
 
-function uploadResult(payload){
-  if(!REPORT_API) return;
-  fetch(REPORT_API, {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify(payload)
-  }).then(r=>r.json())
-    .then(res=>{ if(!res.ok) console.warn("上报失败", res); })
-    .catch(err=>console.warn("上报异常（不影响答题）", err));
+function wait(ms){return new Promise(resolve=>setTimeout(resolve, ms));}
+function safeText(v){return String(v ?? "").replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));}
+function setSubmitStatus(type, msg, actionHtml=""){
+  const box=document.getElementById("submitStatus");
+  if(!box) return;
+  box.className=`submit-status ${type}`;
+  box.innerHTML=`<span class="msg">${safeText(msg)}</span>${actionHtml}`;
+}
+function formatReportPayload(payload){
+  return [
+    `姓名：${payload.name}`,
+    `部门：${payload.dept}`,
+    `分数：${payload.score}`,
+    `懂装修：${payload.r}`,
+    `懂用户：${payload.u}`,
+    `懂平台价值：${payload.p}`,
+    `危险盲区：${payload.danger}`,
+    `称号：${payload.badge}`,
+    `结论：${payload.verdict}`,
+    "",
+    "答题明细：",
+    payload.detail
+  ].join("\n");
+}
+function copyReportPayload(){
+  const text=window.__lastReportText || "";
+  const done=()=>setSubmitStatus("fail", "本次结果已复制，请发给管理员人工补录。");
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(()=>prompt("请复制以下内容发给管理员", text));
+  }else{
+    prompt("请复制以下内容发给管理员", text);
+  }
+}
+async function uploadResult(payload){
+  if(!REPORT_API) return {ok:false,msg:"未配置上报接口"};
+  let lastError=null;
+  for(let i=1;i<=REPORT_MAX_TRIES;i++){
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(), REPORT_TIMEOUT_MS);
+    const useStandardJson=i===REPORT_MAX_TRIES;
+    try{
+      const r=await fetch(REPORT_API, {
+        method: "POST",
+        headers: {"Content-Type":useStandardJson?"application/json":"text/plain"},
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+        keepalive: true
+      });
+      const text=await r.text();
+      let res={};
+      try{res=text?JSON.parse(text):{};}catch(_){res={ok:false,msg:text||"接口返回内容异常"};}
+      if(r.ok && res.ok!==false) return {...res,ok:true,attempt:i};
+      lastError=new Error(res.msg || `接口返回 ${r.status}`);
+    }catch(err){
+      lastError=err;
+    }finally{
+      clearTimeout(timer);
+    }
+    if(i<REPORT_MAX_TRIES) await wait(900*i);
+  }
+  const msg=lastError?.name==="AbortError"?"提交超时":(lastError?.message || "网络异常");
+  console.warn("上报异常（不影响答题）", lastError);
+  return {ok:false,msg,attempt:REPORT_MAX_TRIES};
 }
 
 const LENS_NAME = {SALE:"成交视角", PROC:"流程视角", GUT:"想当然"};
@@ -964,8 +1039,7 @@ function buildReport(){
     return `${i+1}. ${DIM[q.dim].cn}：${q.text}；学员答案：${a.letter}. ${a.answer}（${a.correct?"正确":"错误"}）`;
   }).join("\n");
 
-  /* ── 上报到智能表格（经 Worker 中转，异步不阻塞渲染） ── */
-  uploadResult({
+  const reportPayload={
     name: userName,
     dept: userDept,
     score: score,
@@ -977,9 +1051,15 @@ function buildReport(){
     verdict: verdict,
     percentile: percentile,
     detail: answerDetail
-  });
+  };
+  window.__lastReportPayload=reportPayload;
+  window.__lastReportText=formatReportPayload(reportPayload);
 
   document.getElementById("report").innerHTML=`
+    <div id="submitStatus" class="submit-status pending">
+      <span class="msg">结果正在同步到智能表格，请先不要关闭页面。</span>
+    </div>
+
     <div class="rs-hero">
       <div class="rs-score-card">
         <div class="rs-medal">
@@ -1046,6 +1126,20 @@ function buildReport(){
     </div>
     <div class="rs-foot">三懂知识大挑战 · DEMO · FOR ${userName}</div>
   `;
+
+  /* ── 上报到智能表格（经 Worker 中转，可见状态 + 自动重试） ── */
+  uploadResult(reportPayload).then(res=>{
+    if(res.ok){
+      const retryNote=res.attempt>1?`（第 ${res.attempt} 次成功）`:"";
+      setSubmitStatus("ok", `结果已同步到智能表格${retryNote}`);
+    }else{
+      setSubmitStatus(
+        "fail",
+        `自动提交失败：${res.msg}。本次结果已保留，可复制给管理员补录。`,
+        `<button type="button" onclick="copyReportPayload()">复制本次结果</button>`
+      );
+    }
+  });
 }
 </script>
 </body>
