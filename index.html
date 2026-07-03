@@ -478,9 +478,51 @@ function copyReportPayload(){
     prompt("请复制以下内容发给管理员", text);
   }
 }
+function isMobileReportBrowser(){
+  const ua=navigator.userAgent || "";
+  return /Android|iPhone|iPad|iPod|Mobile|MicroMessenger|wxwork|WeCom/i.test(ua);
+}
+function rejectAfter(ms, msg){
+  return new Promise((_, reject)=>setTimeout(()=>reject(new Error(msg)), ms));
+}
+async function mobileFireAndForget(body){
+  try{
+    await Promise.race([
+      fetch(REPORT_API, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {"Content-Type":"text/plain"},
+        body: body,
+        keepalive: true
+      }),
+      rejectAfter(3500, "手机免等待提交超时")
+    ]);
+    return {ok:true,attempt:0,mobile:true};
+  }catch(err){
+    if(navigator.sendBeacon){
+      try{
+        const blob=new Blob([body], {type:"text/plain;charset=UTF-8"});
+        if(navigator.sendBeacon(REPORT_API, blob)){
+          return {ok:true,attempt:0,mobile:true,beacon:true};
+        }
+      }catch(_){
+        try{
+          if(navigator.sendBeacon(REPORT_API, body)){
+            return {ok:true,attempt:0,mobile:true,beacon:true};
+          }
+        }catch(__){}
+      }
+    }
+    return {ok:false,msg:err.message || "手机提交通道异常"};
+  }
+}
 async function uploadResult(payload){
   if(!REPORT_API) return {ok:false,msg:"未配置上报接口"};
   const body=JSON.stringify(payload);
+  if(isMobileReportBrowser()){
+    const mobileRes=await mobileFireAndForget(body);
+    if(mobileRes.ok) return mobileRes;
+  }
   let lastError=null;
   for(let i=1;i<=REPORT_MAX_TRIES;i++){
     const canAbort=typeof AbortController!=="undefined";
@@ -495,7 +537,10 @@ async function uploadResult(payload){
         keepalive: true
       };
       if(controller) options.signal=controller.signal;
-      const r=await fetch(REPORT_API, options);
+      const r=await Promise.race([
+        fetch(REPORT_API, options),
+        rejectAfter(REPORT_TIMEOUT_MS+800, "提交超时")
+      ]);
       const text=await r.text();
       let res={};
       try{res=text?JSON.parse(text):{};}catch(_){res={ok:false,msg:text||"接口返回内容异常"};}
@@ -1151,8 +1196,8 @@ function buildReport(){
   /* ── 上报到智能表格（经 Worker 中转，可见状态 + 自动重试） ── */
   uploadResult(reportPayload).then(res=>{
     if(res.ok){
-      if(res.beacon){
-        setSubmitStatus("ok", "已通过手机兜底通道提交，请停留 5 秒后再关闭页面。");
+      if(res.mobile){
+        setSubmitStatus("ok", "已发出手机提交请求，请停留 10 秒后再关闭页面，并由管理员核对表格。");
       }else{
         const retryNote=res.attempt>1?`（第 ${res.attempt} 次成功）`:"";
         setSubmitStatus("ok", `结果已同步到智能表格${retryNote}`);
