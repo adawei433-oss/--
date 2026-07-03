@@ -446,7 +446,7 @@ const REPORT_TIMEOUT_MS = 10000;
 const REPORT_MAX_TRIES = 3;
 
 function wait(ms){return new Promise(resolve=>setTimeout(resolve, ms));}
-function safeText(v){return String(v ?? "").replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));}
+function safeText(v){return String(v == null ? "" : v).replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));}
 function setSubmitStatus(type, msg, actionHtml=""){
   const box=document.getElementById("submitStatus");
   if(!box) return;
@@ -480,32 +480,53 @@ function copyReportPayload(){
 }
 async function uploadResult(payload){
   if(!REPORT_API) return {ok:false,msg:"未配置上报接口"};
+  const body=JSON.stringify(payload);
   let lastError=null;
   for(let i=1;i<=REPORT_MAX_TRIES;i++){
-    const controller=new AbortController();
-    const timer=setTimeout(()=>controller.abort(), REPORT_TIMEOUT_MS);
+    const canAbort=typeof AbortController!=="undefined";
+    const controller=canAbort?new AbortController():null;
+    const timer=canAbort?setTimeout(()=>controller.abort(), REPORT_TIMEOUT_MS):null;
     const useStandardJson=i===REPORT_MAX_TRIES;
     try{
-      const r=await fetch(REPORT_API, {
+      const options={
         method: "POST",
         headers: {"Content-Type":useStandardJson?"application/json":"text/plain"},
-        body: JSON.stringify(payload),
-        signal: controller.signal,
+        body: body,
         keepalive: true
-      });
+      };
+      if(controller) options.signal=controller.signal;
+      const r=await fetch(REPORT_API, options);
       const text=await r.text();
       let res={};
       try{res=text?JSON.parse(text):{};}catch(_){res={ok:false,msg:text||"接口返回内容异常"};}
-      if(r.ok && res.ok!==false) return {...res,ok:true,attempt:i};
+      if(r.ok && res.ok!==false){
+        res.ok=true;
+        res.attempt=i;
+        return res;
+      }
       lastError=new Error(res.msg || `接口返回 ${r.status}`);
     }catch(err){
       lastError=err;
     }finally{
-      clearTimeout(timer);
+      if(timer) clearTimeout(timer);
     }
     if(i<REPORT_MAX_TRIES) await wait(900*i);
   }
-  const msg=lastError?.name==="AbortError"?"提交超时":(lastError?.message || "网络异常");
+  if(navigator.sendBeacon){
+    try{
+      const blob=new Blob([body], {type:"text/plain;charset=UTF-8"});
+      if(navigator.sendBeacon(REPORT_API, blob)){
+        return {ok:true,attempt:REPORT_MAX_TRIES+1,beacon:true};
+      }
+    }catch(_){
+      try{
+        if(navigator.sendBeacon(REPORT_API, body)){
+          return {ok:true,attempt:REPORT_MAX_TRIES+1,beacon:true};
+        }
+      }catch(__){}
+    }
+  }
+  const msg=lastError && lastError.name==="AbortError"?"提交超时":((lastError && lastError.message) || "网络异常");
   console.warn("上报异常（不影响答题）", lastError);
   return {ok:false,msg,attempt:REPORT_MAX_TRIES};
 }
@@ -1130,8 +1151,12 @@ function buildReport(){
   /* ── 上报到智能表格（经 Worker 中转，可见状态 + 自动重试） ── */
   uploadResult(reportPayload).then(res=>{
     if(res.ok){
-      const retryNote=res.attempt>1?`（第 ${res.attempt} 次成功）`:"";
-      setSubmitStatus("ok", `结果已同步到智能表格${retryNote}`);
+      if(res.beacon){
+        setSubmitStatus("ok", "已通过手机兜底通道提交，请停留 5 秒后再关闭页面。");
+      }else{
+        const retryNote=res.attempt>1?`（第 ${res.attempt} 次成功）`:"";
+        setSubmitStatus("ok", `结果已同步到智能表格${retryNote}`);
+      }
     }else{
       setSubmitStatus(
         "fail",
