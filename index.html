@@ -520,10 +520,6 @@ async function mobileFireAndForget(body){
 async function uploadResult(payload){
   if(!REPORT_API) return {ok:false,msg:"未配置上报接口"};
   const body=JSON.stringify(payload);
-  if(isMobileReportBrowser()){
-    const mobileRes=await mobileFireAndForget(body);
-    if(mobileRes.ok) return mobileRes;
-  }
   let lastError=null;
   for(let i=1;i<=REPORT_MAX_TRIES;i++){
     const canAbort=typeof AbortController!=="undefined";
@@ -557,6 +553,10 @@ async function uploadResult(payload){
       if(timer) clearTimeout(timer);
     }
     if(i<REPORT_MAX_TRIES) await wait(900*i);
+  }
+  if(isMobileReportBrowser()){
+    const mobileRes=await mobileFireAndForget(body);
+    if(mobileRes.ok) return mobileRes;
   }
   if(navigator.sendBeacon){
     try{
@@ -1032,7 +1032,7 @@ function buildReport(){
   uploadResult(reportPayload).then(res=>{
     if(res.ok){
       if(res.mobile){
-        setSubmitStatus("ok", "结果已提交，可放心关闭页面。");
+        setSubmitStatus("ok", "已通过手机兜底通道提交，请停留 5 秒后再关闭页面。");
       }else{
         const retryNote=res.attempt>1?`（第 ${res.attempt} 次成功）`:"";
         setSubmitStatus("ok", `结果已同步到智能表格${retryNote}`);
