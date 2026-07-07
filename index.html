@@ -449,7 +449,8 @@
    const REPORT_API = "https://raspy-dream-4769sandong-relay.adawei433.workers.dev";
    留空 "" 则不上报，页面其余功能完全不受影响。 */
 const REPORT_API = "https://raspy-dream-4769sandong-relay.adawei433.workers.dev";
-const REPORT_TIMEOUT_MS = 10000;
+const REPORT_TIMEOUT_MS = 20000;
+const MOBILE_REPORT_TIMEOUT_MS = 60000;
 const REPORT_MAX_TRIES = 3;
 
 function wait(ms){return new Promise(resolve=>setTimeout(resolve, ms));}
@@ -522,6 +523,9 @@ function isMobileReportBrowser(){
   const ua=navigator.userAgent || "";
   return /Android|iPhone|iPad|iPod|Mobile|MicroMessenger|wxwork|WeCom/i.test(ua);
 }
+function reportTimeoutMs(){
+  return isMobileReportBrowser()?MOBILE_REPORT_TIMEOUT_MS:REPORT_TIMEOUT_MS;
+}
 function rejectAfter(ms, msg){
   return new Promise((_, reject)=>setTimeout(()=>reject(new Error(msg)), ms));
 }
@@ -542,7 +546,7 @@ function postByXhr(body, contentType){
     }
     const xhr=new XMLHttpRequest();
     xhr.open("POST", REPORT_API, true);
-    xhr.timeout=REPORT_TIMEOUT_MS;
+    xhr.timeout=reportTimeoutMs();
     xhr.setRequestHeader("Content-Type", contentType);
     xhr.onload=()=>resolve({status:xhr.status, text:xhr.responseText || ""});
     xhr.onerror=()=>reject(new Error("网络请求被浏览器拦截或连接失败"));
@@ -584,7 +588,10 @@ async function mobileFireAndForget(body){
 async function uploadResult(payload){
   if(!REPORT_API) return {ok:false,msg:"未配置上报接口"};
   const body=JSON.stringify(payload);
-  const attempts=[
+  const attempts=isMobileReportBrowser()?[
+    {name:"手机兼容通道", transport:"xhr", contentType:"text/plain;charset=UTF-8"},
+    {name:"手机标准通道", transport:"fetch", contentType:"text/plain;charset=UTF-8"}
+  ]:[
     {name:"标准通道", transport:"fetch", contentType:"text/plain;charset=UTF-8"},
     {name:"兼容通道", transport:"xhr", contentType:"text/plain;charset=UTF-8"},
     {name:"JSON通道", transport:"fetch", contentType:"application/json;charset=UTF-8"},
@@ -593,9 +600,10 @@ async function uploadResult(payload){
   let lastError=null;
   for(let i=0;i<attempts.length;i++){
     const attempt=attempts[i];
+    const timeoutMs=reportTimeoutMs();
     const canAbort=typeof AbortController!=="undefined";
     const controller=canAbort?new AbortController():null;
-    const timer=canAbort?setTimeout(()=>controller.abort(), REPORT_TIMEOUT_MS):null;
+    const timer=canAbort?setTimeout(()=>controller.abort(), timeoutMs):null;
     try{
       let response;
       if(attempt.transport==="xhr"){
@@ -610,7 +618,7 @@ async function uploadResult(payload){
         if(controller) options.signal=controller.signal;
         const r=await Promise.race([
           fetch(REPORT_API, options),
-          rejectAfter(REPORT_TIMEOUT_MS+800, "提交超时")
+          rejectAfter(timeoutMs+1200, "提交超时")
         ]);
         response={status:r.status, text:await r.text()};
       }
@@ -660,7 +668,7 @@ function handleUploadResponse(res){
 function retryReportPayload(){
   const payload=window.__lastReportPayload;
   if(!payload) return;
-  setSubmitStatus("pending", "正在重新提交，请先不要关闭页面。");
+  setSubmitStatus("pending", "正在重新提交到智能表格，手机端可能需要 1-2 分钟，请先不要关闭页面。");
   uploadResult(payload).then(handleUploadResponse);
 }
 function readRelayPayloadFromUrl(){
@@ -1074,7 +1082,7 @@ function buildReport(){
 
   document.getElementById("report").innerHTML=`
     <div id="submitStatus" class="submit-status pending">
-      <span class="msg">结果正在同步到智能表格，请先不要关闭页面。</span>
+      <span class="msg">结果正在提交到智能表格，手机端可能需要 1-2 分钟，请先不要关闭页面。</span>
     </div>
 
     <div class="rs-hero">
