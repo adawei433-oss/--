@@ -237,7 +237,7 @@
   .submit-status{
     margin:-6px 0 18px;background:#fff;border:2px solid #E4ECFA;border-radius:18px;
     box-shadow:0 6px 16px rgba(50,115,242,.08);padding:13px 16px;
-    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    display:flex;align-items:flex-start;justify-content:flex-start;gap:12px;flex-wrap:wrap;
     font-size:13px;color:var(--ink2);font-weight:700;line-height:1.7;
   }
   .submit-status::before{
@@ -248,7 +248,8 @@
   .submit-status.ok::before{background:var(--green);box-shadow:0 0 0 5px var(--green-soft);}
   .submit-status.fail{border-color:#F7C3BE;background:#FFF6F5;color:#A03D32;}
   .submit-status.fail::before{background:var(--red);box-shadow:0 0 0 5px var(--red-soft);}
-  .submit-status .msg{flex:1;}
+  .submit-status .msg{flex:1 1 320px;min-width:0;overflow-wrap:anywhere;}
+  .submit-actions{display:flex;gap:10px;flex-wrap:wrap;margin-left:auto;}
   .submit-status button{
     border:none;border-radius:999px;background:var(--blue);color:#fff;
     padding:8px 16px;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;
@@ -338,6 +339,11 @@
     .cv-form{flex-direction:column;}
     .qz-conf.show{flex-direction:column;gap:12px;}
     .cf{width:100%;text-align:center;}
+    .submit-status{gap:12px;padding:14px 15px;}
+    .submit-status::before{margin-top:7px;}
+    .submit-status .msg{flex:1 1 calc(100% - 34px);line-height:1.75;}
+    .submit-actions{width:100%;margin-left:22px;}
+    .submit-status button{flex:1 1 120px;}
   }
   @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important;}}
 </style>
@@ -452,7 +458,7 @@ function setSubmitStatus(type, msg, actionHtml=""){
   const box=document.getElementById("submitStatus");
   if(!box) return;
   box.className=`submit-status ${type}`;
-  box.innerHTML=`<span class="msg">${safeText(msg)}</span>${actionHtml}`;
+  box.innerHTML=`<span class="msg">${safeText(msg)}</span>${actionHtml?`<span class="submit-actions">${actionHtml}</span>`:""}`;
 }
 function formatReportPayload(payload){
   return [
@@ -472,11 +478,44 @@ function formatReportPayload(payload){
 }
 function copyReportPayload(){
   const text=window.__lastReportText || "";
-  const done=()=>setSubmitStatus("fail", "本次结果已复制，请发给管理员人工补录。");
+  const done=()=>setSubmitStatus("fail", "本次结果已复制，请发给管理员人工补录。", failActionButtons());
   if(navigator.clipboard && navigator.clipboard.writeText){
     navigator.clipboard.writeText(text).then(done).catch(()=>prompt("请复制以下内容发给管理员", text));
   }else{
     prompt("请复制以下内容发给管理员", text);
+  }
+}
+function failActionButtons(){
+  return `<button type="button" onclick="retryReportPayload()">重新提交</button><button type="button" onclick="copyRelayLink()">复制补录链接</button><button type="button" onclick="copyReportPayload()">复制本次结果</button>`;
+}
+function base64UrlEncode(str){
+  const bytes=new TextEncoder().encode(str);
+  let bin="";
+  bytes.forEach(b=>bin+=String.fromCharCode(b));
+  return btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+function base64UrlDecode(str){
+  const pad=str.length%4?"=".repeat(4-str.length%4):"";
+  const bin=atob((str+pad).replace(/-/g,"+").replace(/_/g,"/"));
+  const bytes=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+function relayLinkForPayload(payload){
+  const url=new URL(location.href);
+  url.search="?relay=1";
+  url.hash="data="+base64UrlEncode(JSON.stringify(payload));
+  return url.toString();
+}
+function copyRelayLink(){
+  const payload=window.__lastReportPayload;
+  if(!payload) return;
+  const link=relayLinkForPayload(payload);
+  const done=()=>setSubmitStatus("fail", "补录链接已复制。请发给管理员，由管理员在电脑上打开即可自动补传。", failActionButtons());
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(link).then(done).catch(()=>prompt("请复制以下补录链接发给管理员", link));
+  }else{
+    prompt("请复制以下补录链接发给管理员", link);
   }
 }
 function isMobileReportBrowser(){
@@ -622,6 +661,35 @@ function retryReportPayload(){
   const payload=window.__lastReportPayload;
   if(!payload) return;
   setSubmitStatus("pending", "正在重新提交，请先不要关闭页面。");
+  uploadResult(payload).then(handleUploadResponse);
+}
+function readRelayPayloadFromUrl(){
+  const params=new URLSearchParams(location.search);
+  if(params.get("relay")!=="1") return null;
+  const raw=(location.hash||"").replace(/^#data=/,"");
+  if(!raw) return null;
+  try{return JSON.parse(base64UrlDecode(raw));}
+  catch(err){return {__bad:true,msg:err.message || "补录链接解析失败"};}
+}
+function showRelayUpload(payload){
+  if(payload.__bad){
+    document.getElementById("report").innerHTML=`
+      <div id="submitStatus" class="submit-status fail"><span class="msg">${safeText(payload.msg)}</span></div>
+      <div class="card fullcard"><div class="sec-tt"><b>补录链接无效</b></div><div class="prose">请让测试同学重新复制补录链接。</div></div>
+    `;
+    show("report");
+    return;
+  }
+  window.__lastReportPayload=payload;
+  window.__lastReportText=formatReportPayload(payload);
+  document.getElementById("report").innerHTML=`
+    <div id="submitStatus" class="submit-status pending"><span class="msg">正在通过电脑补传到智能表格，请先不要关闭页面。</span></div>
+    <div class="card fullcard">
+      <div class="sec-tt"><b>补录提交</b><span class="tag">${safeText(payload.name||"未填写姓名")}</span></div>
+      <div class="prose">这是一条手机端失败后的补录记录。提交成功后，顶部会显示“结果已同步到智能表格”。</div>
+    </div>
+  `;
+  show("report");
   uploadResult(payload).then(handleUploadResponse);
 }
 
@@ -1079,6 +1147,8 @@ function buildReport(){
   /* ── 上报到智能表格（经 Worker 中转，可见状态 + 自动重试） ── */
   uploadResult(reportPayload).then(handleUploadResponse);
 }
+const relayPayload=readRelayPayloadFromUrl();
+if(relayPayload) showRelayUpload(relayPayload);
 </script>
 </body>
 </html>
