@@ -845,8 +845,7 @@ function buildReport(){
     else if(top.s>=75)badge=DIM[top.k].title75;
   }
   let mod="";
-  if(danger>=2)mod=" · 待校准";
-  else if(master/answers.length>=0.7&&danger===0)mod=" · 稳";
+  if(master/answers.length>=0.7&&danger===0)mod=" · 稳";
   if(badge)badge+=mod;
 
   const percentile=Math.min(96,Math.max(8,Math.round(totalPct*0.9+master*3-danger*4)));
