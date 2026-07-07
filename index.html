@@ -486,6 +486,31 @@ function isMobileReportBrowser(){
 function rejectAfter(ms, msg){
   return new Promise((_, reject)=>setTimeout(()=>reject(new Error(msg)), ms));
 }
+function parseReportResult(status, text){
+  let res={};
+  try{res=text?JSON.parse(text):{};}catch(_){res={ok:false,msg:text||"接口返回内容异常"};}
+  if(status>=200 && status<300 && res.ok!==false){
+    res.ok=true;
+    return res;
+  }
+  throw new Error(res.msg || `接口返回 ${status || "异常"}`);
+}
+function postByXhr(body, contentType){
+  return new Promise((resolve, reject)=>{
+    if(typeof XMLHttpRequest==="undefined"){
+      reject(new Error("当前浏览器不支持兼容提交通道"));
+      return;
+    }
+    const xhr=new XMLHttpRequest();
+    xhr.open("POST", REPORT_API, true);
+    xhr.timeout=REPORT_TIMEOUT_MS;
+    xhr.setRequestHeader("Content-Type", contentType);
+    xhr.onload=()=>resolve({status:xhr.status, text:xhr.responseText || ""});
+    xhr.onerror=()=>reject(new Error("网络请求被浏览器拦截或连接失败"));
+    xhr.ontimeout=()=>reject(new Error("提交超时"));
+    xhr.send(body);
+  });
+}
 async function mobileFireAndForget(body){
   try{
     await Promise.race([
@@ -520,61 +545,84 @@ async function mobileFireAndForget(body){
 async function uploadResult(payload){
   if(!REPORT_API) return {ok:false,msg:"未配置上报接口"};
   const body=JSON.stringify(payload);
+  const attempts=[
+    {name:"标准通道", transport:"fetch", contentType:"text/plain;charset=UTF-8"},
+    {name:"兼容通道", transport:"xhr", contentType:"text/plain;charset=UTF-8"},
+    {name:"JSON通道", transport:"fetch", contentType:"application/json;charset=UTF-8"},
+    {name:"JSON兼容通道", transport:"xhr", contentType:"application/json;charset=UTF-8"}
+  ];
   let lastError=null;
-  for(let i=1;i<=REPORT_MAX_TRIES;i++){
+  for(let i=0;i<attempts.length;i++){
+    const attempt=attempts[i];
     const canAbort=typeof AbortController!=="undefined";
     const controller=canAbort?new AbortController():null;
     const timer=canAbort?setTimeout(()=>controller.abort(), REPORT_TIMEOUT_MS):null;
-    const useStandardJson=i===REPORT_MAX_TRIES;
     try{
-      const options={
-        method: "POST",
-        headers: {"Content-Type":useStandardJson?"application/json":"text/plain"},
-        body: body,
-        keepalive: true
-      };
-      if(controller) options.signal=controller.signal;
-      const r=await Promise.race([
-        fetch(REPORT_API, options),
-        rejectAfter(REPORT_TIMEOUT_MS+800, "提交超时")
-      ]);
-      const text=await r.text();
-      let res={};
-      try{res=text?JSON.parse(text):{};}catch(_){res={ok:false,msg:text||"接口返回内容异常"};}
-      if(r.ok && res.ok!==false){
-        res.ok=true;
-        res.attempt=i;
-        return res;
+      let response;
+      if(attempt.transport==="xhr"){
+        response=await postByXhr(body, attempt.contentType);
+      }else{
+        const options={
+          method: "POST",
+          headers: {"Content-Type":attempt.contentType},
+          body: body,
+          cache: "no-store"
+        };
+        if(controller) options.signal=controller.signal;
+        const r=await Promise.race([
+          fetch(REPORT_API, options),
+          rejectAfter(REPORT_TIMEOUT_MS+800, "提交超时")
+        ]);
+        response={status:r.status, text:await r.text()};
       }
-      lastError=new Error(res.msg || `接口返回 ${r.status}`);
+      const res=parseReportResult(response.status, response.text);
+      res.attempt=i+1;
+      res.channel=attempt.name;
+      return res;
     }catch(err){
       lastError=err;
     }finally{
       if(timer) clearTimeout(timer);
     }
-    if(i<REPORT_MAX_TRIES) await wait(900*i);
+    if(i<attempts.length-1) await wait(600*(i+1));
   }
+  let fallbackTried=false;
   if(isMobileReportBrowser()){
-    const mobileRes=await mobileFireAndForget(body);
-    if(mobileRes.ok) return mobileRes;
+    fallbackTried=true;
+    await mobileFireAndForget(body);
   }
   if(navigator.sendBeacon){
     try{
       const blob=new Blob([body], {type:"text/plain;charset=UTF-8"});
-      if(navigator.sendBeacon(REPORT_API, blob)){
-        return {ok:true,attempt:REPORT_MAX_TRIES+1,beacon:true};
-      }
+      fallbackTried=navigator.sendBeacon(REPORT_API, blob) || fallbackTried;
     }catch(_){
       try{
-        if(navigator.sendBeacon(REPORT_API, body)){
-          return {ok:true,attempt:REPORT_MAX_TRIES+1,beacon:true};
-        }
+        fallbackTried=navigator.sendBeacon(REPORT_API, body) || fallbackTried;
       }catch(__){}
     }
   }
   const msg=lastError && lastError.name==="AbortError"?"提交超时":((lastError && lastError.message) || "网络异常");
   console.warn("上报异常（不影响答题）", lastError);
-  return {ok:false,msg,attempt:REPORT_MAX_TRIES};
+  return {ok:false,msg,attempt:attempts.length,fallbackTried};
+}
+function handleUploadResponse(res){
+  if(res.ok){
+    const retryNote=res.attempt>1?`（第 ${res.attempt} 次成功）`:"";
+    setSubmitStatus("ok", `结果已同步到智能表格${retryNote}`);
+  }else{
+    const fallbackNote=res.fallbackTried?"已尝试手机兜底发送，但无法确认是否入表；":"";
+    setSubmitStatus(
+      "fail",
+      `自动提交失败：${res.msg}。${fallbackNote}本次结果已保留，可重新提交或复制给管理员补录。`,
+      `<button type="button" onclick="retryReportPayload()">重新提交</button><button type="button" onclick="copyReportPayload()">复制本次结果</button>`
+    );
+  }
+}
+function retryReportPayload(){
+  const payload=window.__lastReportPayload;
+  if(!payload) return;
+  setSubmitStatus("pending", "正在重新提交，请先不要关闭页面。");
+  uploadResult(payload).then(handleUploadResponse);
 }
 
 const LENS_NAME = {SALE:"成交视角", PROC:"流程视角", GUT:"想当然"};
@@ -1029,22 +1077,7 @@ function buildReport(){
   `;
 
   /* ── 上报到智能表格（经 Worker 中转，可见状态 + 自动重试） ── */
-  uploadResult(reportPayload).then(res=>{
-    if(res.ok){
-      if(res.mobile){
-        setSubmitStatus("ok", "已通过手机兜底通道提交，请停留 5 秒后再关闭页面。");
-      }else{
-        const retryNote=res.attempt>1?`（第 ${res.attempt} 次成功）`:"";
-        setSubmitStatus("ok", `结果已同步到智能表格${retryNote}`);
-      }
-    }else{
-      setSubmitStatus(
-        "fail",
-        `自动提交失败：${res.msg}。本次结果已保留，可复制给管理员补录。`,
-        `<button type="button" onclick="copyReportPayload()">复制本次结果</button>`
-      );
-    }
-  });
+  uploadResult(reportPayload).then(handleUploadResponse);
 }
 </script>
 </body>
