@@ -240,6 +240,7 @@
     display:flex;align-items:flex-start;justify-content:flex-start;gap:12px;flex-wrap:wrap;
     font-size:13px;color:var(--ink2);font-weight:700;line-height:1.7;
   }
+  .submit-status[hidden]{display:none!important;}
   .submit-status::before{
     content:"";width:10px;height:10px;border-radius:50%;background:var(--blue);flex:none;
     box-shadow:0 0 0 5px var(--blue-soft);
@@ -460,11 +461,13 @@ function setSubmitStatus(type, msg, actionHtml=""){
   if(!box) return;
   if(type==="ok"){
     box.hidden=true;
+    box.style.display="none";
     box.className="submit-status ok";
     box.innerHTML="";
     return;
   }
   box.hidden=false;
+  box.style.display="";
   box.className=`submit-status ${type}`;
   box.innerHTML=`<span class="msg">${safeText(msg)}</span>${actionHtml?`<span class="submit-actions">${actionHtml}</span>`:""}`;
 }
