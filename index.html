@@ -458,6 +458,13 @@ function safeText(v){return String(v == null ? "" : v).replace(/[&<>"']/g, m=>({
 function setSubmitStatus(type, msg, actionHtml=""){
   const box=document.getElementById("submitStatus");
   if(!box) return;
+  if(type==="ok"){
+    box.hidden=true;
+    box.className="submit-status ok";
+    box.innerHTML="";
+    return;
+  }
+  box.hidden=false;
   box.className=`submit-status ${type}`;
   box.innerHTML=`<span class="msg">${safeText(msg)}</span>${actionHtml?`<span class="submit-actions">${actionHtml}</span>`:""}`;
 }
@@ -733,7 +740,7 @@ function showRelayUpload(payload){
     <div id="submitStatus" class="submit-status pending"><span class="msg">正在通过电脑补传到智能表格，请先不要关闭页面。</span></div>
     <div class="card fullcard">
       <div class="sec-tt"><b>补录提交</b><span class="tag">${safeText(payload.name||"未填写姓名")}</span></div>
-      <div class="prose">这是一条手机端失败后的补录记录。提交成功后，顶部会显示“结果已同步到智能表格”。</div>
+      <div class="prose">这是一条手机端失败后的补录记录。提交成功后不再额外提示；如果提交失败，顶部会显示失败原因。</div>
     </div>
   `;
   show("report");
