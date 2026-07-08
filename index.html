@@ -449,7 +449,7 @@
    const REPORT_API = "https://raspy-dream-4769sandong-relay.adawei433.workers.dev";
    留空 "" 则不上报，页面其余功能完全不受影响。 */
 const REPORT_API = "https://raspy-dream-4769sandong-relay.adawei433.workers.dev";
-const REPORT_TIMEOUT_MS = 20000;
+const REPORT_TIMEOUT_MS = 10000;
 const MOBILE_REPORT_TIMEOUT_MS = 60000;
 const REPORT_MAX_TRIES = 3;
 
@@ -585,12 +585,48 @@ async function mobileFireAndForget(body){
     return {ok:false,msg:err.message || "手机提交通道异常"};
   }
 }
+async function uploadResultDesktop(payload){
+  const body=JSON.stringify(payload);
+  let lastError=null;
+  for(let i=1;i<=REPORT_MAX_TRIES;i++){
+    const canAbort=typeof AbortController!=="undefined";
+    const controller=canAbort?new AbortController():null;
+    const timer=canAbort?setTimeout(()=>controller.abort(), REPORT_TIMEOUT_MS):null;
+    const useJson=i===REPORT_MAX_TRIES;
+    try{
+      const options={
+        method: "POST",
+        headers: {"Content-Type":useJson?"application/json":"text/plain"},
+        body: body,
+        keepalive: true
+      };
+      if(controller) options.signal=controller.signal;
+      const r=await Promise.race([
+        fetch(REPORT_API, options),
+        rejectAfter(REPORT_TIMEOUT_MS+800, "提交超时")
+      ]);
+      const res=parseReportResult(r.status, await r.text());
+      res.attempt=i;
+      res.channel=useJson?"PC JSON通道":"PC标准通道";
+      return res;
+    }catch(err){
+      lastError=err;
+    }finally{
+      if(timer) clearTimeout(timer);
+    }
+    if(i<REPORT_MAX_TRIES) await wait(900*i);
+  }
+  const msg=lastError && lastError.name==="AbortError"?"提交超时":((lastError && lastError.message) || "网络异常");
+  console.warn("上报异常（不影响答题）", lastError);
+  return {ok:false,msg,attempt:REPORT_MAX_TRIES};
+}
 async function uploadResult(payload){
   if(!REPORT_API) return {ok:false,msg:"未配置上报接口"};
+  if(!isMobileReportBrowser()) return uploadResultDesktop(payload);
   const body=JSON.stringify(payload);
   const attempts=isMobileReportBrowser()?[
-    {name:"手机兼容通道", transport:"xhr", contentType:"text/plain;charset=UTF-8"},
-    {name:"手机标准通道", transport:"fetch", contentType:"text/plain;charset=UTF-8"}
+    {name:"手机兼容通道", transport:"xhr", contentType:"text/plain"},
+    {name:"手机标准通道", transport:"fetch", contentType:"text/plain"}
   ]:[
     {name:"标准通道", transport:"fetch", contentType:"text/plain;charset=UTF-8"},
     {name:"兼容通道", transport:"xhr", contentType:"text/plain;charset=UTF-8"},
@@ -668,7 +704,10 @@ function handleUploadResponse(res){
 function retryReportPayload(){
   const payload=window.__lastReportPayload;
   if(!payload) return;
-  setSubmitStatus("pending", "正在重新提交到智能表格，手机端可能需要 1-2 分钟，请先不要关闭页面。");
+  const msg=isMobileReportBrowser()
+    ?"正在重新提交到智能表格，手机端可能需要 1-2 分钟，请先不要关闭页面。"
+    :"正在重新提交到智能表格，请先不要关闭页面。";
+  setSubmitStatus("pending", msg);
   uploadResult(payload).then(handleUploadResponse);
 }
 function readRelayPayloadFromUrl(){
@@ -1079,10 +1118,13 @@ function buildReport(){
   };
   window.__lastReportPayload=reportPayload;
   window.__lastReportText=formatReportPayload(reportPayload);
+  const pendingSubmitText=isMobileReportBrowser()
+    ?"结果正在提交到智能表格，手机端可能需要 1-2 分钟，请先不要关闭页面。"
+    :"结果正在同步到智能表格，请先不要关闭页面。";
 
   document.getElementById("report").innerHTML=`
     <div id="submitStatus" class="submit-status pending">
-      <span class="msg">结果正在提交到智能表格，手机端可能需要 1-2 分钟，请先不要关闭页面。</span>
+      <span class="msg">${pendingSubmitText}</span>
     </div>
 
     <div class="rs-hero">
