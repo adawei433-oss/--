@@ -1,0 +1,57 @@
+name: One-time label update
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/update-labels-once.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-labels:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update page labels
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path("index.html")
+          text = path.read_text(encoding="utf-8")
+          replacements = {
+              '<div class="cv-input"><label>花名</label><input id="inp-name" placeholder="怎么称呼你？" maxlength="8"></div>': '<div class="cv-input"><label>工号</label><input id="inp-name" placeholder="请输入工号" maxlength="20"></div>',
+              '<div class="cv-input"><label>部门</label><input id="inp-dept" placeholder="选填" maxlength="16"></div>': '<div class="cv-input"><label>姓名</label><input id="inp-dept" placeholder="请输入姓名" maxlength="12"></div>',
+              '`姓名：${payload.name}`': '`工号：${payload.name}`',
+              '`部门：${payload.dept}`': '`姓名：${payload.dept}`',
+              'safeText(payload.name||"未填写姓名")': 'safeText(payload.name||"未填写工号")',
+              'userName="兔厂新人"': 'userName="兔厂同学"',
+              '||"兔厂新人"': '||"兔厂同学"',
+              '超过了 <b>${percentile}%</b> 的同期新人': '超过了 <b>${percentile}%</b> 的兔厂同学',
+          }
+          missing = [old for old in replacements if old not in text]
+          for old, new in replacements.items():
+              text = text.replace(old, new)
+          if missing:
+              print("Missing patterns:")
+              for item in missing:
+                  print(item)
+          path.write_text(text, encoding="utf-8")
+
+      - name: Commit result and remove this workflow
+        shell: bash
+        run: |
+          rm -f .github/workflows/update-labels-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "Update quiz participant labels"
+          git push
