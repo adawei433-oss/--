@@ -376,8 +376,8 @@
           <div class="cv-chip"><div class="e">🚀</div><div class="t">领路线</div><div class="d">直达知识手册</div></div>
         </div>
         <div class="cv-form">
-          <div class="cv-input"><label>花名</label><input id="inp-name" placeholder="怎么称呼你？" maxlength="8"></div>
-          <div class="cv-input"><label>部门</label><input id="inp-dept" placeholder="选填" maxlength="16"></div>
+          <div class="cv-input"><label>工号</label><input id="inp-name" placeholder="请输入工号" maxlength="20"></div>
+          <div class="cv-input"><label>姓名</label><input id="inp-dept" placeholder="请输入姓名" maxlength="12"></div>
         </div>
         <div class="cv-start">
           <button class="btn" onclick="startQuiz()">开 始 答 题</button>
@@ -473,8 +473,8 @@ function setSubmitStatus(type, msg, actionHtml=""){
 }
 function formatReportPayload(payload){
   return [
-    `姓名：${payload.name}`,
-    `部门：${payload.dept}`,
+    `工号：${payload.name}`,
+    `姓名：${payload.dept}`,
     `分数：${payload.score}`,
     `懂装修：${payload.r}`,
     `懂用户：${payload.u}`,
@@ -742,7 +742,7 @@ function showRelayUpload(payload){
   document.getElementById("report").innerHTML=`
     <div id="submitStatus" class="submit-status pending"><span class="msg">正在通过电脑补传到智能表格，请先不要关闭页面。</span></div>
     <div class="card fullcard">
-      <div class="sec-tt"><b>补录提交</b><span class="tag">${safeText(payload.name||"未填写姓名")}</span></div>
+      <div class="sec-tt"><b>补录提交</b><span class="tag">${safeText(payload.name||"未填写工号")}</span></div>
       <div class="prose">这是一条手机端失败后的补录记录。提交成功后不再额外提示；如果提交失败，顶部会显示失败原因。</div>
     </div>
   `;
@@ -904,7 +904,7 @@ const QUESTION_BANK = [
 ];
 
 let QUESTIONS=[];
-let idx=0, picked=-1, pickedLetter="", answers=[], userName="兔厂新人", userDept="";
+let idx=0, picked=-1, pickedLetter="", answers=[], userName="兔厂同学", userDept="";
 let timerSec=15*60, timerId=null;
 
 function shuffleCopy(list){
@@ -935,7 +935,7 @@ function pickQuestions(){
 }
 
 function startQuiz(){
-  userName=document.getElementById("inp-name").value.trim()||"兔厂新人";
+  userName=document.getElementById("inp-name").value.trim()||"兔厂同学";
   userDept=document.getElementById("inp-dept").value.trim();
   QUESTIONS=pickQuestions();
   idx=0; answers=[]; timerSec=15*60;
@@ -1150,7 +1150,7 @@ function buildReport(){
         <div class="rs-cap">${userName}${userDept?" · "+userDept:""} 的三懂认知报告</div>
         <div class="rs-sc-label">总分（满分 100 分）</div>
         <div class="rs-sc-num">${score}<span>分</span></div>
-        <div class="rs-sc-pct">超过了 <b>${percentile}%</b> 的同期新人</div>
+        <div class="rs-sc-pct">超过了 <b>${percentile}%</b> 的兔厂同学</div>
         <div><span class="rs-verdict">${verdict}</span></div>
         ${badge?`<div><span class="rs-title-chip">🎖 称号 · ${badge}</span></div>`:""}
       </div>
